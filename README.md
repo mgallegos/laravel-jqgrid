@@ -21,4 +21,4 @@ A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid).
 
 ## License
 
-All LaravelJqGrid code is Copyright (c) 2013 by the original authors.
+Laravel jqGrid package is open source software licensed under the MIT License.
