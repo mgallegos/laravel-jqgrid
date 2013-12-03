@@ -7,6 +7,10 @@ A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid).
 * [Laravel 4 Framework](https://github.com/laravel/laravel)
 * [jQuery Grid Plugin v4.5.2 or later](http://www.trirand.com/blog/)
 
+## Features
+
+...
+
 ## Installation
 
 ...
