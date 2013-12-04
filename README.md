@@ -17,7 +17,17 @@ A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid).
 
 ## Installation
 
-...
+Require this package in your composer.json and run composer update:
+
+    "mgallegos/laravel-jqgrid": "dev-master"
+
+After updating composer, add the ServiceProvider to the providers array in app/config/app.php
+
+    'Mgallegos\LaravelJqgrid\LaravelJqgridServiceProvider',
+
+Finally, add the Render Facade to the aliases array in app/config/app.php:
+
+    'GridRender' => 'Mgallegos\LaravelJqgrid\Facades\GridRender',
 
 ## Usage
 
