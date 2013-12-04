@@ -12,8 +12,8 @@ A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid).
 ## Features
 
 * Config file with global properties to use in all grids of your application.
-* Render ..
-* Freedom to use any datasource.
+* PHP Render to handle javascript code.
+* Datasource independent (you are able to create your own datasource implementation).
 
 ## Installation
 
