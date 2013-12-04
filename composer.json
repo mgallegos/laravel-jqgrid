@@ -1,0 +1,25 @@
+{
+    "name": "mgallegos/laravel-jqgrid",
+    "description": "A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid)",
+    "keywords": ["laravel", "jquery", "jqgrid", "grid"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mario Gallegos",
+            "email": "mgallegos76@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Mgallegos\\LaravelJqgrid": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
