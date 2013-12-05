@@ -25,15 +25,19 @@ After updating composer, add the ServiceProvider to the providers array in app/c
 
     'Mgallegos\LaravelJqgrid\LaravelJqgridServiceProvider',
 
-Finally, add the Render Facade to the aliases array in app/config/app.php:
+Add the Render Facade to the aliases array in app/config/app.php:
 
     'GridRender' => 'Mgallegos\LaravelJqgrid\Facades\GridRender',
+
+Optionally, run the following command if you wish to overwrite the default config properties:
+    
+	php artisan config:publish mgallegos/laravel-jqgrid/
 
 ## Usage
 
 ### Step 1: Use the jqgrid render to create a grid in your application.
 
-Let's create the view myview.blade.php:
+ Let's create the view myview.blade.php:
 ```php
 {{ 
     GridRender::setGridId("myFirstGrid")
@@ -56,6 +60,7 @@ Let's create the view myview.blade.php:
     		->renderGrid(); 
 }}
 ```
+You can see the documentation of each method in the [interface source code](src/Mgallegos/LaravelJqgrid/Renders/RenderInterface.php).
 ### Step 2: Create a class that implement the "RepositoryInterface".
 
 Create your own datasource implementation, just remember to take into account all parameter received by both methods and the expected type of the return value.
@@ -156,7 +161,10 @@ Finally let's add the following line in the file app/routes.php
 ```php
 Route::controller('example', 'Example\AppController');
 ```
-And that's it!!
+
+### Step 5: Edit package config file (optional)
+
+In the [package config file](src/config/config.php) you can set global properties to use in all grids of your application.
 
 ## Live Demo
 
