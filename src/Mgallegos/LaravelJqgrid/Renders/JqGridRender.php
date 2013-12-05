@@ -294,7 +294,7 @@ class JqGridRender implements RenderInterface {
 	}
 	
 	/**
-	 * Set a jqGrid option.
+	 * Set an identifier to the grid.
 	 *
 	 * @param  string $option
 	 * 	A valid jqGrid option, online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:options
