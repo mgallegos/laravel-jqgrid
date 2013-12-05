@@ -61,6 +61,8 @@ Optionally, run the following command if you wish to overwrite the default confi
 }}
 ```
 You can see the documentation of each method in the [interface source code](src/Mgallegos/LaravelJqgrid/Renders/RenderInterface.php).
+>   Note: This package will **NOT** include the `jquery.jqGrid.min.js`, that is your work to do.
+
 ### Step 2: Create a class that implement the "RepositoryInterface".
 
 Create your own datasource implementation, just remember to take into account all parameter received by both methods and the expected type of the return value.
