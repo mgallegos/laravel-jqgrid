@@ -63,7 +63,7 @@ Optionally, run the following command if you wish to overwrite the default confi
 You can see the documentation of each method in the [interface source code](src/Mgallegos/LaravelJqgrid/Renders/RenderInterface.php).
 >   Note: This package will **NOT** include the `jquery.jqGrid.min.js`, that is your work to do.
 
-### Step 2: Create a class that implement the "RepositoryInterface".
+### Step 2: Create a class that implements the "RepositoryInterface".
 
 Create your own datasource implementation, just remember to take into account all parameter received by both methods and the expected type of the return value.
 
@@ -126,7 +126,7 @@ class ExampleRepository implements RepositoryInterface{
 ```
 ### Step 3: Create a controller to handle your grid data request.
 
-The package includes a data encoder to help you send the data to the grid in the correct format. An instance of a class that implement the interface Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface has already been bound in the package service provider, so all you have to do is declare it as an argument in you class constructor.
+The package includes a data encoder to help you send the data to the grid in the correct format. An instance of a class that implements the interface Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface has already been bound in the package service provider, so all you have to do is declare it as an argument in you class constructor.
 
 Let's create the class AppController:
 ```php
