@@ -12,7 +12,7 @@ namespace Mgallegos\LaravelJqgrid\Renders;
 interface RenderInterface {
 	
 	/**
-	 * Add a column at the last position in the columns model.
+	 * Set an identifier to the grid.
 	 *
 	 * @param  string $id
 	 * 	An id to interact with the grid through javascript
