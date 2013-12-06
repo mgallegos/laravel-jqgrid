@@ -44,6 +44,7 @@ Optionally, run the following command if you wish to overwrite the default confi
     		->enablefilterToolbar()
     		->setGridOption('url',URL::to('example/grid-data'))
     		->setGridOption('rowNum',5)
+    		->setGridOption('shrinkToFit',false)
     		->setGridOption('sortname','id')
     		->setGridOption('caption','LaravelJqGrid example')
     		->setNavigatorOptions('navigator', array('viewtext'=>'view'))
