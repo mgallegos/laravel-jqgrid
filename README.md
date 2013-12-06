@@ -61,7 +61,7 @@ Optionally, run the following command if you wish to overwrite the default confi
     		->renderGrid(); 
 }}
 ```
-You can see the documentation of each method in the [interface source code](src/Mgallegos/LaravelJqgrid/Renders/RenderInterface.php).
+You can see the documentation of each method in the [RenderInterface source code](src/Mgallegos/LaravelJqgrid/Renders/RenderInterface.php).
 >   Note: This package will **NOT** include the `jquery.jqGrid.min.js`, that is your work to do.
 
 ### Step 2: Create a class that implements the "RepositoryInterface".
