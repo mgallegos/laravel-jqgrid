@@ -133,6 +133,9 @@ Let's create the class AppController:
 ```php
 <?php namespace Example;
 
+use BaseController;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\View;
 use Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface;
 
 class AppController extends BaseController {
