@@ -10,6 +10,7 @@
 namespace Mgallegos\LaravelJqgrid\Encoders;
 
 use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
+use Exception;
 
 class JqGridJsonEncoder implements RequestedDataInterface {
 	
@@ -105,6 +106,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 		$count = $Repository->getTotalNumberOfRows($filters['rules']);
 		
+		if(!is_int($count))
+		{
+			throw new Exception("The method getTotalNumberOfRows must return an integer");
+		}
+		
 		if( $count > 0 )
 		{
 			$totalPages = ceil($count/$limit);
@@ -137,7 +143,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		
 		if(!is_array($rows) || !is_array($rows[0]))
 		{
-			throw new Exception("The method getTotalNumberOfRows must return an array of arrays, example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))");
+			throw new Exception("The method getRows must return an array of arrays, example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))");
 		}
 				
 		echo json_encode(array('page'=>$page, 'total'=>$totalPages, 'records'=>$count, 'rows'=>$rows));				
