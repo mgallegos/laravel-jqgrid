@@ -39,7 +39,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 */
 	public function getTotalNumberOfRows(array $filters = array())
 	{
-		return  $this->Model->whereNested(function($query) use ($filters)
+		return  intval($this->Model->whereNested(function($query) use ($filters)
 		{
 			foreach ($filters as $filter)
 			{
@@ -58,7 +58,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 		})
-		->count();
+		->count());
 	}
 
 
@@ -126,7 +126,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 			$row = array_values($row);
 		}
 		 
-		return $row;
+		return $rows;
 	}
 
 }
