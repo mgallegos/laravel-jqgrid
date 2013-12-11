@@ -280,9 +280,14 @@ class JqGridRender implements RenderInterface {
 			$validator->validate($properties);
 		}
 		
-		if (!isset($properties['name']))
+		if (!isset($properties['name']) && !isset($properties['index']))
 		{
-			$properties = array_add($properties, 'name', 'Col. ' . (count($this->colModel) + 1));
+			$properties = array_add($properties, 'name', 'Col. ' . (count($this->colModel) + 1));			
+		}
+		
+		if (!isset($properties['name']) && isset($properties['index']))
+		{
+			$properties = array_add($properties, 'name', $properties['index']);
 		}
 		
 		$this->markFunctionTypeProperty($properties);
@@ -568,7 +573,7 @@ class JqGridRender implements RenderInterface {
 		
 		$this->colModel = array();
 		
-		$this->navigatorOptions = array();
+		$this->navigatorOptions = $this->defaultNavigatorOptions;
 		
 		$this->navigatorEditOptions = array();
 		

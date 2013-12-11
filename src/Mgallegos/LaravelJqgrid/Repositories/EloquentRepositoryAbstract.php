@@ -9,20 +9,32 @@
 
 namespace Mgallegos\LaravelJqgrid\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
-
 abstract class EloquentRepositoryAbstract implements RepositoryInterface{
-
-	protected $Model;
-
-	protected $visibleColumns = array();
-
-	protected $orderBy = array();
-
-	public function __construct(Model $Model)
-	{
-		$this->Model = $Model;
-	}
+	
+	
+	/**
+	 * Database
+	 *
+	 * @var Illuminate\Database\Eloquent\Model or Illuminate\Database\Query 
+	 *
+	 */
+	protected $Database;
+	
+	/**
+	 * Visible columns
+	 *
+	 * @var Array
+	 *
+	 */
+	protected $visibleColumns;
+	
+	/**
+	 * OrderBy
+	 *
+	 * @var array
+	 *
+	 */
+	protected $orderBy = array(array());
 
 
 	/**
@@ -39,7 +51,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 */
 	public function getTotalNumberOfRows(array $filters = array())
 	{
-		return  intval($this->Model->whereNested(function($query) use ($filters)
+		return  intval($this->Database->whereNested(function($query) use ($filters)
 		{
 			foreach ($filters as $filter)
 			{
@@ -87,6 +99,11 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 		{
 			$this->orderBy = array(array($orderBy, $sord));
 		}
+		
+		if($limit == 0)
+		{
+			$limit = 1;
+		}
 		 
 		$orderByRaw = array();
 
@@ -95,9 +112,9 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 			array_push($orderByRaw, implode(' ',$orderBy));
 		}
 		 
-		$orderByRaw = implode(',',$orderByRaw);
-
-		$rows = $this->Model->whereNested(function($query) use ($filters)
+		$orderByRaw = implode(',',$orderByRaw);						
+		
+		$rows = $this->Database->whereNested(function($query) use ($filters)
 		{
 			foreach ($filters as $filter)
 			{
@@ -106,24 +123,29 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 					$query->whereIn($filter['field'], explode(',',$filter['data']));
 					continue;
 				}
-				 
+					
 				if($filter['op'] == 'is not in')
 				{
 					$query->whereNotIn($filter['field'], explode(',',$filter['data']));
 					continue;
 				}
-				 
+					
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 		})
 		->take($limit)
 		->skip($offset)
 		->orderByRaw($orderByRaw)
-		->get($this->visibleColumns)->toArray();
+		->get($this->visibleColumns);				
+		
+		if(!is_array($rows))
+		{
+			$rows = $rows->toArray();
+		}
 		 
 		foreach ($rows as &$row)
-		{
-			$row = array_values($row);
+		{	
+			$row = array_values((array) $row);
 		}
 		 
 		return $rows;

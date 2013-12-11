@@ -33,7 +33,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		
 		if(isset($postedData['filters']))
 		{
-			$filters = json_decode($postedData['filters'], true);
+			$filters = json_decode(str_replace('\'','"',$postedData['filters']), true);
 		}
 	
 		if(!$sidx || empty($sidx))
@@ -41,8 +41,8 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 			$sidx = null;
 			$sord = null;
 		}
-			
-		if(isset($postedData['_search']) && $postedData['_search']=="true" && $postedData['filters'])
+
+		if(isset($filters['rules']) && is_array($filters['rules']))
 		{
 			foreach ($filters['rules'] as &$filter)
 			{
@@ -138,13 +138,13 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		}
 			
 		$limit = $limit * $page;
-		
+				
 		$rows = $Repository->getRows($limit, $start, $sidx, $sord, $filters['rules']);
-		
-		if(!is_array($rows) || !is_array($rows[0]))
+
+		if(!is_array($rows) || (isset($rows[0]) && !is_array($rows[0])))
 		{
 			throw new Exception("The method getRows must return an array of arrays, example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))");
-		}
+		}			
 				
 		echo json_encode(array('page'=>$page, 'total'=>$totalPages, 'records'=>$count, 'rows'=>$rows));				
 	}	
