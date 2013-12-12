@@ -15,6 +15,12 @@ A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid).
 * PHP Render to handle javascript code.
 * Datasource independent (you are able to create your own datasource implementation).
 
+## Live Demo
+
+A live demo of Laravel 4 jqGrid package is available in the following adress:
+
+The source code of the demo is available [here]().
+
 ## Installation
 
 Require this package in your composer.json and run composer update:
@@ -216,9 +222,6 @@ Route::controller('example', 'Example\AppController');
 
 In the [package config file](src/config/config.php) you can set global properties to use in all grids of your application.
 
-## Live Demo
-
-Coming soon!
 
 ## License
 
