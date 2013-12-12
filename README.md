@@ -162,7 +162,7 @@ class ExampleRepository extends EloquentRepositoryAbstract {
 											
 		$this->visibleColumns = array('column_1','column_2','column_3');
 		
-		$this->orderBy = array(array('id', 'asc'),('name','desc'));
+		$this->orderBy = array(array('id', 'asc'), array('name','desc'));
 	}
 
 }
