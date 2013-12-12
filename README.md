@@ -142,7 +142,7 @@ class ExampleRepository extends EloquentRepositoryAbstract {
 											
 		$this->visibleColumns = array('column_1','column_2','column_3');
 		
-		$this->orderBy = array(array('table_1.id', 'asc'));
+		$this->orderBy = array(array('table_1.id', 'asc'), array('table_1.name', 'desc'));
 	}
 
 }
@@ -162,7 +162,7 @@ class ExampleRepository extends EloquentRepositoryAbstract {
 											
 		$this->visibleColumns = array('column_1','column_2','column_3');
 		
-		$this->orderBy = array(array('id', 'asc'));
+		$this->orderBy = array(array('id', 'asc'),('name','desc'));
 	}
 
 }
