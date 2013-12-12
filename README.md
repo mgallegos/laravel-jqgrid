@@ -222,6 +222,16 @@ Route::controller('example', 'Example\AppController');
 
 In the [package config file](src/config/config.php) you can set global properties to use in all grids of your application.
 
+## Aditional information
+
+Any questions, feel free to contact me or ask [here](http://forums.laravel.io/viewtopic.php?id=15609).
+
+Any issues, please [report here](https://github.com/mgallegos/laravel-jqgrid/issues).
+
+## TODO
+
+* PDF Exporter.
+* Spreadsheet Exporter.
 
 ## License
 
