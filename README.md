@@ -125,6 +125,50 @@ class ExampleRepository implements RepositoryInterface{
 	
 }
 ```
+If you are using [Query Builder](http://laravel.com/docs/queries) or [Eloquent ORM](http://laravel.com/docs/eloquent) to implement your repository, your class can extends the [EloquentRepositoryAbstract](src/Mgallegos/LaravelJqgrid/Repositoies/EloquentRepositoryAbstract.php) as it will do all the heavy lifting for you.
+
+If you are using [Query Builder](http://laravel.com/docs/queries), your repository class should look like this:
+```php
+<?php namespace Example;
+use Mgallegos\LaravelJqgrid\Repositories\EloquentRepositoryAbstract;
+use \Illuminate\Support\Facades\DB;
+
+class ExampleRepository extends EloquentRepositoryAbstract {
+
+	public function __construct()
+	{
+		$this->Database = DB::table('table_1')
+				             ->join('table_2', 'table_1.id', '=', 'table_2.id');
+											
+		$this->visibleColumns = array('column_1','column_2','column_3');
+		
+		$this->orderBy = array(array('table_1.id', 'asc'));
+	}
+
+}
+```
+If you are using [Eloquent ORM](http://laravel.com/docs/eloquent), your repository class should look like this:
+```php
+<?php namespace Example;
+
+use Illuminate\Database\Eloquent\Model;
+use Mgallegos\LaravelJqgrid\Repositories\EloquentRepositoryAbstract;
+
+class ExampleRepository extends EloquentRepositoryAbstract {
+
+	public function __construct()
+	{
+		$this->Database = new YOUR_DATABASE_MODEL;
+											
+		$this->visibleColumns = array('column_1','column_2','column_3');
+		
+		$this->orderBy = array(array('id', 'asc'));
+	}
+
+}
+```
+>   Note: I recommend you to see the [source code of the live example](https://github.com/mgallegos/laravel-jqgrid-demo), to get a better understanding of how to implement a repository class using [Query Builder](http://laravel.com/docs/queries) and [Eloquent ORM](http://laravel.com/docs/eloquent).
+
 ### Step 3: Create a controller to handle your grid data request.
 
 The package includes a data encoder to help you send the data to the grid in the correct format. An instance of a class that implements the interface Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface has already been bound in the package service provider, so all you have to do is declare it as an argument in you class constructor.
