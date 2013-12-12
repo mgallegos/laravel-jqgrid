@@ -125,7 +125,7 @@ class ExampleRepository implements RepositoryInterface{
 	
 }
 ```
-If you are using [Query Builder](http://laravel.com/docs/queries) or [Eloquent ORM](http://laravel.com/docs/eloquent) to implement your repository, your class can extends the [EloquentRepositoryAbstract](src/Mgallegos/LaravelJqgrid/Repositoies/EloquentRepositoryAbstract.php) as it will do all the heavy lifting for you.
+If you are using [Query Builder](http://laravel.com/docs/queries) or [Eloquent ORM](http://laravel.com/docs/eloquent) to implement your repository, your class can extends the [EloquentRepositoryAbstract](src/Mgallegos/LaravelJqgrid/Repositoies/EloquentRepositoryAbstract.php) class as it will do all the heavy lifting for you.
 
 If you are using [Query Builder](http://laravel.com/docs/queries), your repository class should look like this:
 ```php
@@ -147,7 +147,7 @@ class ExampleRepository extends EloquentRepositoryAbstract {
 
 }
 ```
-If you are using [Eloquent ORM](http://laravel.com/docs/eloquent), your repository class should look like this:
+And if you are using [Eloquent ORM](http://laravel.com/docs/eloquent), your repository class should look like this:
 ```php
 <?php namespace Example;
 
