@@ -17,9 +17,7 @@ A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid).
 
 ## Live Demo
 
-A live demo of Laravel 4 jqGrid package is available at the following address:
-
-http://goo.gl/s8uNBR
+A live demo of Laravel 4 jqGrid package is available at the following address: http://goo.gl/s8uNBR
 
 The source code of the demo is available [here](https://github.com/mgallegos/laravel-jqgrid-demo).
 
