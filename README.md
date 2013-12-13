@@ -116,8 +116,9 @@ class ExampleRepository implements RepositoryInterface{
 	 *	The 'op' key will contain one of the following operators: '=', '<', '>', '<=', '>=', '<>', '!=','like', 'not like', 'is in', 'is not in'.
 	 *	when the 'operator' is 'like' the 'data' already contains the '%' character in the appropiate position.
 	 *	The 'data' key will contain the string searched by the user.
-	 * @return integer
-	 *	Total number of rows
+	 * @return array
+	 *	An array of array, each array will have the data of a row.
+	 *	Example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))
 	 */
 	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array())
 	{
