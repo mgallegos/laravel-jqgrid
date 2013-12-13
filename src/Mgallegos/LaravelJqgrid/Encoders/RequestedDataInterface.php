@@ -19,7 +19,7 @@ interface RequestedDataInterface {
 	 * @param RepositoryInterface $dataRepository
 	 *	An implementation of the RepositoryInterface
 	 * @param  array $postedData
-	 *	All jqGrid posted dRata
+	 *	All jqGrid posted data
 	 * @return string
 	 *	String of a jqGrid compatible data format: xml, json, jsonp, array, xmlstring, jsonstring.
 	 */
