@@ -43,7 +43,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 * @param  array $filters
 	 *  An array of filters, example: array(array('field'=>'column index/name 1','op'=>'operator','data'=>'searched string column 1'), array('field'=>'column index/name 2','op'=>'operator','data'=>'searched string column 2'))
 	 *  The 'field' key will contain the 'index' column property if is set, otherwise the 'name' column property.
-	 *  The 'op' key will contain one of the following operators are: '=', '<', '>', '<=', '>=', '<>', '!=','like', 'not like', 'is in', 'is not in',
+	 *  The 'op' key will contain one of the following operators: '=', '<', '>', '<=', '>=', '<>', '!=','like', 'not like', 'is in', 'is not in'.
 	 *  when the 'operator' is 'like' the 'data' already contains the '%' character in the appropiate position.
 	 *  The 'data' key will contain the string searched by the user.
 	 * @return integer
@@ -87,8 +87,10 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 *  Sorting order
 	 * @param  array $filters
 	 *  An array of filters, example: array(array('field'=>'column index/name 1','op'=>'operator','data'=>'searched string column 1'), array('field'=>'column index/name 2','op'=>'operator','data'=>'searched string column 2'))
-	 *  The operators are: '=', '<', '>', '<=', '>=', '<>', '!=','like', 'not like', 'is in', 'is not in'.
-	 *  When the 'operator' is 'like' the 'data' already contains the '%' character in the appropiate position.
+	 *  The 'field' key will contain the 'index' column property if is set, otherwise the 'name' column property.
+	 *  The 'op' key will contain one of the following operators: '=', '<', '>', '<=', '>=', '<>', '!=','like', 'not like', 'is in', 'is not in'.
+	 *  when the 'operator' is 'like' the 'data' already contains the '%' character in the appropiate position.
+	 *  The 'data' key will contain the string searched by the user.
 	 * @return array
 	 *  An array of array, each array will have the data of a row.
 	 *  Example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))
