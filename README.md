@@ -181,7 +181,7 @@ class ExampleRepository extends EloquentRepositoryAbstract {
 
 ### Step 3: Create a controller to handle your grid data request.
 
-The package includes a data encoder to help you send the data to the grid in the correct format. An instance of a class that implements the interface Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface has already been bound in the package service provider, so all you have to do is declare it as an argument in you class constructor.
+The package includes a data encoder to help you send the data to the grid in the correct format. An instance of a class that implements the interface [Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface](src/Mgallegos/LaravelJqgrid/Encoders/RequestedDataInterface.php) has already been bound in the package service provider, so all you have to do is declare it as an argument in you class constructor.
 
 Let's create the class AppController:
 ```php
