@@ -15,7 +15,7 @@ use Exception;
 class JqGridJsonEncoder implements RequestedDataInterface {
 	
 	/**
-	 * Echo the data requested by a grid in a jqGrid compatible format.
+	 * Echo in a jqGrid compatible format the data requested by a grid.
 	 *
 	 * @param RepositoryInterface $dataRepository
 	 *	An implementation of the RepositoryInterface
