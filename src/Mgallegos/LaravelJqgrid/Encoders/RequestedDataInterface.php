@@ -14,14 +14,13 @@ use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
 interface RequestedDataInterface {
 	
 	/**
-	 * Encode in a jqGrid compatible data format the data requested by a grid.
+	 * Echo the data requested by a grid data in a jqGrid compatible format.
 	 *
 	 * @param RepositoryInterface $dataRepository
 	 *	An implementation of the RepositoryInterface
 	 * @param  array $postedData
 	 *	All jqGrid posted data
-	 * @return string
-	 *	String of a jqGrid compatible data format: xml, json, jsonp, array, xmlstring, jsonstring.
+	 * @return void
 	 */
 	public function encodeRequestedData(RepositoryInterface $Repository,  $postedData);
 	
