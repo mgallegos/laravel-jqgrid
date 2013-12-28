@@ -14,7 +14,7 @@ use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
 interface RequestedDataInterface {
 	
 	/**
-	 * Echo the data requested by a grid data in a jqGrid compatible format.
+	 * Echo in a jqGrid compatible format the data requested by a grid.
 	 *
 	 * @param RepositoryInterface $dataRepository
 	 *	An implementation of the RepositoryInterface
