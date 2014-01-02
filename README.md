@@ -177,7 +177,7 @@ class ExampleRepository extends EloquentRepositoryAbstract {
 
 }
 ```
->   Note: I recommend you to see the [source code of the live example](https://github.com/mgallegos/laravel-jqgrid-demo), to get a better understanding of how to implement a repository class using [Query Builder](http://laravel.com/docs/queries) and [Eloquent ORM](http://laravel.com/docs/eloquent).
+>   Note: I recommend you to see the [source code of the live example](https://github.com/mgallegos/laravel-jqgrid-demo/tree/master/app/Demo/Repository), to get a better understanding of how to implement a repository class using [Query Builder](http://laravel.com/docs/queries) and [Eloquent ORM](http://laravel.com/docs/eloquent).
 
 ### Step 3: Create a controller to handle your grid data request.
 
