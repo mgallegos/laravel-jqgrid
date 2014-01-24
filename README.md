@@ -234,6 +234,9 @@ Any issues, please [report here](https://github.com/mgallegos/laravel-jqgrid/iss
 
 ## TODO
 
+* Advanced Searching implementation.
+* Tree-Grid implementation.
+* Sub-Grid implementation.
 * PDF Exporter.
 * Spreadsheet Exporter.
 
