@@ -516,7 +516,7 @@ class JqGridRender implements RenderInterface {
 	 * Main method that construct the html and javascript code of the grid.
 	 *
 	 * @param  boolean $script
-	 * 	If true a script tag before constructin the grid. Default is true
+	 * 	If true javascript tags will be included within the output. Default is true
 	 * @param  boolean $createTableElement
 	 * 	If true the table element is created automatically from this method. Default is true
 	 * @param  boolean $createPagerElement
