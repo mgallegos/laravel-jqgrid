@@ -232,6 +232,7 @@ Any questions, feel free to [contact me](https://github.com/mgallegos) or ask [h
 
 ## TODO
 
+* Pivot table implementation.
 * Advanced Searching implementation.
 * Tree-Grid implementation.
 * Sub-Grid implementation.
