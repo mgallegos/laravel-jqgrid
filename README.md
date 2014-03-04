@@ -228,7 +228,7 @@ In the [package config file](src/config/config.php) you can set global propertie
 
 ## Aditional information
 
-Any questions, feel free to [contact me](https://github.com/mgallegos) or ask [here](https://github.com/mgallegos/laravel-jqgrid/issues) usign the "question" issue label.
+Any questions, feel free to [contact me](https://github.com/mgallegos) or ask [here](https://github.com/mgallegos/laravel-jqgrid/issues) using the "question" issue label.
 
 ## TODO
 
