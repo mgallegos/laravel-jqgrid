@@ -157,7 +157,7 @@ class ExampleRepository extends EloquentRepositoryAbstract {
 
 }
 ```
-And if you are using [Eloquent ORM](http://laravel.com/docs/eloquent), your repository class should look like this:
+And if you are using [Eloquent ORM](http://laravel.com/docs/eloquent) (use Eloquent ORM only in those cases where your data comes from one table, if your data comes from more than one table use [Query Builder](http://laravel.com/docs/queries)), your repository class should look like this:
 ```php
 <?php namespace Example;
 
