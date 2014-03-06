@@ -110,5 +110,6 @@ return array(
 						'buildSelect' => array(),
 						'dataInit' => array(),
 						'summaryType' => array('sum','count','avg','min','max'),
+						'rowattr' => array(),
 					),
 );
