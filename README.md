@@ -74,10 +74,10 @@ You can see the documentation of each method in the [RenderInterface source code
 
 ### Step 2: Create a class that implements the "RepositoryInterface".
 
-The package includes an implementation of the "RepositoryInterface" that helps you handle your data if you are using [Query Builder](http://laravel.com/docs/queries) or [Eloquent ORM](http://laravel.com/docs/eloquent) (as explained below), I recommend you to use it as it will make your life easier however if can create your own datasource implementation if you need to, just remember to take into account all parameter received by both methods and the expected type of the return value.
+The package includes an implementation of the "RepositoryInterface" that helps you handle your data if you are using [Query Builder](http://laravel.com/docs/queries) or [Eloquent ORM](http://laravel.com/docs/eloquent) (as explained below), I recommend you to use it as it will make your life easier however you can create your own datasource implementation if you need to, just remember to take into account all parameter received by both methods and the expected type of the return value.
 
 Let's create the class ExampleRepository:
-```php
+```phpho
 <?php namespace Example;
 use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
 
