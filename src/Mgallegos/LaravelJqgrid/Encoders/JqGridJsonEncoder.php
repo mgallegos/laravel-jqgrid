@@ -146,6 +146,6 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 			throw new Exception("The method getRows must return an array of arrays, example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))");
 		}			
 				
-		echo json_encode(array('page'=>$page, 'total'=>$totalPages, 'records'=>$count, 'rows'=>$rows));				
+		return \Illuminate\Support\Facades\Response::json(array('page'=>$page, 'total'=>$totalPages, 'records'=>$count, 'rows'=>$rows));				
 	}	
 }
