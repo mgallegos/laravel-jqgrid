@@ -31,21 +31,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		$sidx = $postedData['sidx']; // get index row - i.e. user click to sort
 		$sord = $postedData['sord']; // get the direction
 		
-	        if (!empty($postedData['filters'])) {
-	            $filters = json_decode(str_replace('\'', '"', $postedData['filters']), true);
-	        } elseif (isset($postedData['searchField']) && isset($postedData['searchOper']) && $postedData['searchString']) {
-	            //Support advanced search
-	            $filters = array(
-	                'groupOp' => 'AND',
-	                'rules' => array(
-	                    array(
-	                        'field' => $postedData['searchField'],
-	                        'op' => $postedData['searchOper'],
-	                        'data' => $postedData['searchString'],
-	                    )
-	                ),
-	            );
-	        }
+		if(isset($postedData['filters']))
+		{
+			$filters = json_decode(str_replace('\'','"',$postedData['filters']), true);
+		}
+	
 		if(!$sidx || empty($sidx))
 		{
 			$sidx = null;
