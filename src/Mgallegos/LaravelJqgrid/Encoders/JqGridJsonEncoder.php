@@ -46,6 +46,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
         {
             foreach ($filters['rules'] as $k => &$filter)
             {
+                //removing fake fields
+                if(!isset($Repository->visibleColumns[$filter['field']]))
+                    unset($filters['rules'][$k]);
+                //type casting values
+                settype($filter['data'], $Repository->visibleColumns[$filter['field']]);
                 switch ($filter['op'])
                 {
                     case 'eq': //equal

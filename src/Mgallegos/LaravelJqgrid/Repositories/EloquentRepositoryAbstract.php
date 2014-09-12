@@ -26,7 +26,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
      * @var Array
      *
      */
-    protected $visibleColumns;
+    public $visibleColumns;
 
     /**
      * OrderBy
@@ -162,7 +162,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
             ->take($limit)
             ->skip($offset)
             ->orderByRaw($orderByRaw)
-            ->get($this->visibleColumns);
+            ->get(array_keys($this->visibleColumns));
 
         if(!is_array($rows))
         {
