@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file
  * LaravelJqGrid Service Provider.
@@ -38,12 +38,14 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function register()
-	{			
+	{
+		$this->app->register('Maatwebsite\Excel\ExcelServiceProvider');
+
 		$this->registerRender();
-		
+
 		$this->registerEncoder();
 	}
-	
+
 	/**
 	 * Register render service provider.
 	 *
@@ -58,15 +60,23 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 												array(),
 												array(),
 												$app['config']->get('laravel-jqgrid::default_grid_options'),
+												$app['config']->get('laravel-jqgrid::default_pivot_grid_options'),
+												$app['config']->get('laravel-jqgrid::default_group_header_options'),
 												$app['config']->get('laravel-jqgrid::default_col_model_properties'),
 												$app['config']->get('laravel-jqgrid::default_navigator_options'),
 												$app['config']->get('laravel-jqgrid::default_filter_toolbar_options'),
+												$app['config']->get('laravel-jqgrid::default_filter_toolbar_buttons_options'),
+												$app['config']->get('laravel-jqgrid::default_export_buttons_options'),
+												$app['config']->get('laravel-jqgrid::default_file_properties'),
+												$app['config']->get('laravel-jqgrid::default_sheet_properties'),
 												$app['config']->get('laravel-jqgrid::function_type_properties'),
-												$app['config']->get('laravel-jqgrid::default_filter_toolbar_buttons_options')
+												$app['config']->get('laravel-jqgrid::pivot_options'),
+												$app['config']->get('laravel-jqgrid::group_header_options'),
+												$app['session']->token()
 											);
 		});
 	}
-	
+
 	/**
 	 * Register encoder service provider.
 	 *
@@ -76,7 +86,7 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 	{
 		$this->app->bind('Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface', function($app)
 		{
-			return new Encoders\JqGridJsonEncoder;
+			return new Encoders\JqGridJsonEncoder($app->make('excel'));
 		});
 	}
 
@@ -87,7 +97,7 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array('gridrender');
+		return array('gridrender', 'Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface');
 	}
 
 }

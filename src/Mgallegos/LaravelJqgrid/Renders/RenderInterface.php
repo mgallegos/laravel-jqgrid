@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file
  * JqGrid Render Interface.
@@ -10,7 +10,7 @@
 namespace Mgallegos\LaravelJqgrid\Renders;
 
 interface RenderInterface {
-	
+
 	/**
 	 * Set an identifier to the grid.
 	 *
@@ -20,31 +20,67 @@ interface RenderInterface {
 	 *  Returns an object, allowing the calls to be chained together in a single statement
 	 */
 	public function setGridId($id);
-	
+
 	/**
 	 * Add a column at the last position in the columns model.
 	 *
 	 * @param  array $properties
-	 * 	An array of valid jqGrid column model property, the key of the array must correspond to a column model property.
+	 * 	An array of valid jqGrid column model property, the index key of the array must correspond to a column model property.
 	 * 	Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:colmodel_options
 	 * @return $this
 	 *  Returns an object, allowing the calls to be chained together in a single statement
 	 */
 	public function addColumn(array $columnProperties);
-	
-	
+
 	/**
-	 * Set a jqGrid option.
-	 *
-	 * @param  string $option
-	 * 	A valid jqGrid option, online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:options
-	 * @param  mixed $option
-	 * 	A value of an option can be a string, boolean or array.
-	 * @return $this
-	 *  Returns an object, allowing the calls to be chained together in a single statement
-	 */
+	* Add a group header. This are columns that can be added above the normal grid columns.
+	* This method has no effect when working with pivot grid.
+	*
+	* @param  array $properties
+	* 	An array of valid group header options.
+	* 	Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:groupingheadar
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function addGroupHeader(array $properties = array());
+
+	/**
+	* Add a X dimension. Use this method only when working with pivot grids.
+	*
+	* @param  array $properties
+	* 	An array of valid xDimension options.
+	* 	Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:pivotsettings
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function addXDimension(array $properties = array());
+
+	/**
+	* Add a Y dimension. Use this method only when working with pivot grids.
+	*
+	* @param  array $properties
+	* 	An array of valid yDimension options.
+	* 	Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:pivotsettings
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function addYDimension(array $properties = array());
+
+
+	/**
+	* Set a jqGrid option.
+	*
+	* @param  string $option
+	* 	A valid jqGrid option, online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:options or
+	* 	a valid pivot grid option, online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:pivotsettings
+	* 	a valid group header option, online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:groupingheadar
+	* @param  mixed $option
+	* 	A value of an option can be a string, boolean or array.
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
 	public function setGridOption($option, $value);
-	
+
 	/**
 	 * Set a jqGrid event.
 	 *
@@ -56,7 +92,7 @@ interface RenderInterface {
 	 *  Returns an object, allowing the calls to be chained together in a single statement
 	 */
 	public function setGridEvent($event, $code);
-	
+
 	/**
 	 * Set options in the navigator or in any of the following modules add,edit,del,view, search. Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:navigator
 	 *
@@ -68,7 +104,7 @@ interface RenderInterface {
 	 *  Returns an object, allowing the calls to be chained together in a single statement
 	 */
 	public function setNavigatorOptions($module, array $options);
-	
+
 	/**
 	 * Set an event in the navigator or in the diffrent modules add,edit,del,view, search. Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:navigator
 	 *
@@ -82,7 +118,7 @@ interface RenderInterface {
 	 *  Returns an object, allowing the calls to be chained together in a single statement
 	 */
 	public function setNavigatorEvent($module, $event, $code);
-	
+
 	/**
 	 * Set options for the toolbar filter when enabled. Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:toolbar_searching
 	 *
@@ -92,7 +128,7 @@ interface RenderInterface {
 	 *  Returns an object, allowing the calls to be chained together in a single statement
 	 */
 	public function setFilterToolbarOptions(array $options);
-	
+
 	/**
 	 * Set a toolbar event.
 	 *
@@ -106,6 +142,54 @@ interface RenderInterface {
 	public function setFilterToolbarEvent($event, $code);
 
 	/**
+	* When this method is called the grid will be treated as Pivot Grid (differents javascript methods are used to generate the grid) according to the official documentation. Online documentation available at http://www.trirand.com/jqgridwiki/doku.php?id=wiki:pivotdescription.
+	*
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function setGridAsPivot();
+
+	/**
+	* Hide XLS Navigator button.
+	*
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function hideXlsExporter();
+
+	/**
+	* Hide CSV Navigator button.
+	*
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function hideCsvExporter();
+
+	/**
+	* Set a Laravel Excel file property.
+	*
+	* @param  string $option
+	* 	A valid Laravel Excel file property, online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	* @param  mixed $option
+	* 	A value of an option can be a string, boolean or array.
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function setFileProperty($option, $value);
+
+	/**
+	* Set a Laravel Excel sheet property.
+	*
+	* @param  string $option
+	* 	A valid Laravel Excel sheet property, online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	* @param  mixed $option
+	* 	A value of an option can be a string, boolean or array.
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function setSheetProperty($option, $value);
+
+	/**
 	 * Enable filter toolbar.
 	 *
 	 * @param  boolean $createToggleButton
@@ -115,8 +199,8 @@ interface RenderInterface {
 	 * @return $this
 	 *  Returns an object, allowing the calls to be chained together in a single statement
 	 */
-	public function enableFilterToolbar($createToggleButton = null, $createClearButton = null);	
-		
+	public function enableFilterToolbar($createToggleButton = null, $createClearButton = null);
+
 	/**
 	 * Main method that construct the html and javascript code of the grid.
 	 *
@@ -132,5 +216,5 @@ interface RenderInterface {
 	 * 	String if $echo is set to false, void in any other case
 	 */
 	public function renderGrid($script = true, $createTableElement = true, $createPagerElement = true, $echo = true);
-	
+
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file
  * Repository Interface.
@@ -10,16 +10,16 @@
 namespace Mgallegos\LaravelJqgrid\Repositories;
 
 abstract class EloquentRepositoryAbstract implements RepositoryInterface{
-	
-	
+
+
 	/**
 	 * Database
 	 *
-	 * @var Illuminate\Database\Eloquent\Model or Illuminate\Database\Query 
+	 * @var Illuminate\Database\Eloquent\Model or Illuminate\Database\Query
 	 *
 	 */
 	protected $Database;
-	
+
 	/**
 	 * Visible columns
 	 *
@@ -27,7 +27,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 *
 	 */
 	protected $visibleColumns;
-	
+
 	/**
 	 * OrderBy
 	 *
@@ -60,13 +60,13 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 					$query->whereIn($filter['field'], explode(',',$filter['data']));
 					continue;
 				}
-				 
+
 				if($filter['op'] == 'is not in')
 				{
 					$query->whereNotIn($filter['field'], explode(',',$filter['data']));
 					continue;
 				}
-				 
+
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 		})
@@ -93,7 +93,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 *  The 'data' key will contain the string searched by the user.
 	 * @return array
 	 *  An array of array, each array will have the data of a row.
-	 *  Example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))
+	 *  Example: array(array("column1" => "1-1", "column2" => "1-2"), array("column1" => "2-1", "column2" => "2-2"))
 	 */
 	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array())
 	{
@@ -101,21 +101,21 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 		{
 			$this->orderBy = array(array($orderBy, $sord));
 		}
-		
+
 		if($limit == 0)
 		{
 			$limit = 1;
 		}
-		 
+
 		$orderByRaw = array();
 
 		foreach ($this->orderBy as $orderBy)
 		{
 			array_push($orderByRaw, implode(' ',$orderBy));
 		}
-		 
-		$orderByRaw = implode(',',$orderByRaw);						
-		
+
+		$orderByRaw = implode(',',$orderByRaw);
+
 		$rows = $this->Database->whereNested(function($query) use ($filters)
 		{
 			foreach ($filters as $filter)
@@ -125,31 +125,31 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 					$query->whereIn($filter['field'], explode(',',$filter['data']));
 					continue;
 				}
-					
+
 				if($filter['op'] == 'is not in')
 				{
 					$query->whereNotIn($filter['field'], explode(',',$filter['data']));
 					continue;
 				}
-					
+
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 		})
 		->take($limit)
 		->skip($offset)
 		->orderByRaw($orderByRaw)
-		->get($this->visibleColumns);				
-		
+		->get($this->visibleColumns);
+
 		if(!is_array($rows))
 		{
 			$rows = $rows->toArray();
 		}
-		 
+
 		foreach ($rows as &$row)
-		{	
-			$row = array_values((array) $row);
+		{
+			$row = (array) $row;
 		}
-		 
+
 		return $rows;
 	}
 

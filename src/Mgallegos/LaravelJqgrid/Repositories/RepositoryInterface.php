@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file
  * Repository Interface.
@@ -10,9 +10,9 @@
 namespace Mgallegos\LaravelJqgrid\Repositories;
 
 interface RepositoryInterface {
-	
+
 	/**
-	 * Calculate the number of rows. It's used for paging the result 
+	 * Calculate the number of rows. It's used for paging the result
 	 *
 	 * @param  array $filters
 	 *	An array of filters, example: array(array('field'=>'column index/name 1','op'=>'operator','data'=>'searched string column 1'), array('field'=>'column index/name 2','op'=>'operator','data'=>'searched string column 2'))
@@ -24,8 +24,8 @@ interface RepositoryInterface {
 	 *	Total number of rows
 	 */
 	public function getTotalNumberOfRows(array $filters = array());
-	
-	
+
+
 	/**
 	 * Get the rows data to be shown in the grid.
 	 *
@@ -34,7 +34,7 @@ interface RepositoryInterface {
 	 * @param  integer $offset
 	 *	Start position
 	 * @param  string $orderBy
-	 *	Column name to order by. 
+	 *	Column name to order by.
 	 * @param  array $sord
 	 *	Sorting order
 	 * @param  array $filters
@@ -45,9 +45,8 @@ interface RepositoryInterface {
 	 *	The 'data' key will contain the string searched by the user.
 	 * @return array
 	 *	An array of array, each array will have the data of a row.
-	 *	Example: array(array('row 1 col 1','row 1 col 2'), array('row 2 col 1','row 2 col 2'))
+	 *  Example: array(array("column1" => "1-1", "column2" => "1-2"), array("column1" => "2-1", "column2" => "2-2"))
 	 */
 	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array());
 
-	
 }

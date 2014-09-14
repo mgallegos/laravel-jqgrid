@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file
  * JqGrid Render Facade.
@@ -11,13 +11,13 @@ namespace Mgallegos\LaravelJqgrid\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class GridRender extends Facade {
+class GridEncoder extends Facade {
 
 	/**
 	 * Get the registered name of the component.
 	 *
 	 * @return string
 	 */
-	protected static function getFacadeAccessor() { return 'gridrender'; }
+	protected static function getFacadeAccessor() { return 'Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface'; }
 
 }
