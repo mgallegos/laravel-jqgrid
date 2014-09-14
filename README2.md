@@ -32,7 +32,7 @@ There are three demos available:
 
 ## Documentation
 
-The complete documentation can be found at: (mariogallegos.com)[http://goo.gl/Krn7o7]
+The complete documentation can be found at: [mariogallegos.com](http://goo.gl/Krn7o7)
 
 
 ## Aditional information
