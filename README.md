@@ -1,8 +1,8 @@
-# Laravel 4 jqGrid package
+# Laravel jqGrid package
 
 [![Latest Stable Version](https://poser.pugx.org/mgallegos/laravel-jqgrid/v/stable.png)](https://packagist.org/packages/mgallegos/laravel-jqgrid) [![Total Downloads](https://poser.pugx.org/mgallegos/laravel-jqgrid/downloads.png)](https://packagist.org/packages/mgallegos/laravel-jqgrid)
 
-A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid).
+Laravel jqGrid package allows you to easily integrate the popular jQuery Grid Plugin (jqGrid) into your Laravel application.
 
 ![Image](https://raw.github.com/mgallegos/laravel-jqgrid/master/jqGrid.png)
 
