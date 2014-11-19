@@ -926,10 +926,19 @@ class JqGridRender implements RenderInterface {
 			$this->options = array_add($this->options, 'pager', $this->gridId . 'Pager');
 		}
 
+		if(isset($this->options['filename']))
+		{
+			$fileName = substr($this->options['filename'],0,31);
+		}
+		else
+		{
+			$fileName = $this->gridId;
+		}
+
 		$html = '';
 		$html .= '<form method="' . $this->options['mtype'] . '" action="'. $this->options['url'] . '" accept-charset="UTF-8" id="'. $this->gridId .'ExportForm">
 								<input name="_token" type="hidden" value="' . $this->token . '">
-								<input id="'. $this->gridId .'Name" name="name" type="hidden" value="'. (isset($this->options['caption'])?$this->options['caption']:$this->gridId) .'">
+								<input id="'. $this->gridId .'Name" name="name" type="hidden" value="'. $fileName .'">
 								<input id="'. $this->gridId .'Model" name="model" type="hidden">
 								<input id="'. $this->gridId .'ExportFormat" name="exportFormat" type="hidden" value="xls">
 								<input id="'. $this->gridId .'Filters" name="filters" type="hidden">

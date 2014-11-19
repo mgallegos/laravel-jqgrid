@@ -239,20 +239,20 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 							{
 								if(isset($model['hidden']) && $model['hidden'] === true)
 								{
-									unset($row[$model['index']]);
+									unset($row[$model['name']]);
 								}
 								else
 								{
 									if(isset($model['label']))
 									{
-										$row = array_add($row, $model['label'], $row[$model['index']]);
-										unset($row[$model['index']]);
+										$row = array_add($row, $model['label'], $row[$model['name']]);
+										unset($row[$model['name']]);
 									}
 									else
 									{
-										$temp = $row[$model['index']];
-										unset($row[$model['index']]);
-										$row = array_add($row, $model['index'], $temp);
+										$temp = $row[$model['name']];
+										unset($row[$model['name']]);
+										$row = array_add($row, $model['name'], $temp);
 									}
 								}
 							}
