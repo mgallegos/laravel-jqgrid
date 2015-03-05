@@ -11,8 +11,8 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "illuminate/support": "4.*",
-        "maatwebsite/excel": "1.*"
+        "illuminate/support": "4.*|5.*",
+        "maatwebsite/excel": "~2.0.0"
     },
     "autoload": {
         "classmap": [
