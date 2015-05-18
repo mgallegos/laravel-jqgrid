@@ -1,6 +1,6 @@
 {
     "name": "mgallegos/laravel-jqgrid",
-    "description": "A Laravel 4 package implementation of the popular jQuery Grid Plugin (jqGrid)",
+    "description": "Laravel jqGrid package allows you to easily integrate the popular jQuery Grid Plugin (jqGrid) into your Laravel application.",
     "keywords": ["laravel", "jquery", "jqgrid", "grid"],
     "license": "MIT",
     "authors": [
