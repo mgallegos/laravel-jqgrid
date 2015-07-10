@@ -97,9 +97,46 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 */
 	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array())
 	{
+		$orderByRaw = null;
+
 		if(!is_null($orderBy) || !is_null($sord))
 		{
-			$this->orderBy = array(array($orderBy, $sord));
+			$found = false;
+			$pos = strpos($orderBy, 'desc');
+
+			if ($pos !== false)
+			{
+				$found = true;
+			}
+			else
+			{
+				$pos = strpos($orderBy, 'asc');
+
+				if ($pos !== false)
+				{
+					$found = true;
+				}
+			}
+
+			if($found)
+			{
+				$orderBy = rtrim($orderBy);
+
+				if(substr($orderBy, -1) == ',')
+				{
+					$orderBy = substr($orderBy, 0, -1);
+				}
+				else
+				{
+					$orderBy .= " $sord";
+				}
+
+				$orderByRaw = $orderBy;
+			}
+			else
+			{
+				$this->orderBy = array(array($orderBy, $sord));
+			}
 		}
 
 		if($limit == 0)
@@ -107,14 +144,17 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 			$limit = 1;
 		}
 
-		$orderByRaw = array();
-
-		foreach ($this->orderBy as $orderBy)
+		if(empty($orderByRaw))
 		{
-			array_push($orderByRaw, implode(' ',$orderBy));
-		}
+			$orderByRaw = array();
 
-		$orderByRaw = implode(',',$orderByRaw);
+			foreach ($this->orderBy as $orderBy)
+			{
+				array_push($orderByRaw, implode(' ',$orderBy));
+			}
+
+			$orderByRaw = implode(',',$orderByRaw);
+		}
 
 		$rows = $this->Database->whereNested(function($query) use ($filters)
 		{
