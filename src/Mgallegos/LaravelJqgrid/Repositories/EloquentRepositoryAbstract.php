@@ -67,6 +67,18 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 					continue;
 				}
 
+				if($filter['op'] == 'is null')
+				{
+					$query->whereNull($filter['field']);
+					continue;
+				}
+
+				if($filter['op'] == 'is not null')
+				{
+					$query->whereNotNull($filter['field']);
+					continue;
+				}
+
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 		})
@@ -169,6 +181,18 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 				if($filter['op'] == 'is not in')
 				{
 					$query->whereNotIn($filter['field'], explode(',',$filter['data']));
+					continue;
+				}
+
+				if($filter['op'] == 'is null')
+				{
+					$query->whereNull($filter['field']);
+					continue;
+				}
+
+				if($filter['op'] == 'is not null')
+				{
+					$query->whereNotNull($filter['field']);
 					continue;
 				}
 
