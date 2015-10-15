@@ -253,14 +253,14 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 								{
 									if(isset($model['label']))
 									{
-										$row = array_add($row, $model['label'], $row[$model['name']]);
+										$row[$model['label']] = $row[$model['name']];
 										unset($row[$model['name']]);
 									}
 									else
 									{
 										$temp = $row[$model['name']];
 										unset($row[$model['name']]);
-										$row = array_add($row, $model['name'], $temp);
+										$row[$model['name']] = $temp;
 									}
 								}
 							}
