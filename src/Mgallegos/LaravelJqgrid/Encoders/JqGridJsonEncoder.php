@@ -84,6 +84,33 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 			$filters = json_decode(str_replace('\'','"',$postedData['filters']), true);
 		}
 
+		if(isset($postedData['nodeid']))
+		{
+			$nodeId = $postedData['nodeid'];
+		}
+		else
+		{
+			$nodeId = null;
+		}
+
+		if(isset($postedData['n_level']))
+		{
+			$nodeLevel = $postedData['n_level'];
+		}
+		else
+		{
+			$nodeLevel = null;
+		}
+
+		if(isset($postedData['exportFormat']))
+		{
+			$exporting = true;
+		}
+		else
+		{
+			$exporting = false;
+		}
+
 		if(!$sidx || empty($sidx))
 		{
 			$sidx = null;
@@ -202,7 +229,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 		if(empty($postedData['pivotRows']))
 		{
-			$rows = $Repository->getRows($limit, $start, $sidx, $sord, $filters['rules']);
+			$rows = $Repository->getRows($limit, $start, $sidx, $sord, $filters['rules'], $nodeId, $nodeLevel, $exporting);
 		}
 		else
 		{
@@ -214,7 +241,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 			throw new Exception('The method getRows must return an array of arrays, example: array(array("column1"  =>  "1-1", "column2" => "1-2"), array("column1" => "2-1", "column2" => "2-2"))');
 		}
 
-		if(isset($postedData['exportFormat']))
+		if($exporting)
 		{
 			$this->Excel->create($postedData['name'], function($Excel) use ($rows, $postedData)
 			{

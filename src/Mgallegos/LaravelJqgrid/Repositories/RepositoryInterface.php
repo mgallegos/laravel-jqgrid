@@ -35,7 +35,7 @@ interface RepositoryInterface {
 	 *	Start position
 	 * @param  string $orderBy
 	 *	Column name to order by.
-	 * @param  array $sord
+	 * @param  string $sord
 	 *	Sorting order
 	 * @param  array $filters
 	 *	An array of filters, example: array(array('field'=>'column index/name 1','op'=>'operator','data'=>'searched string column 1'), array('field'=>'column index/name 2','op'=>'operator','data'=>'searched string column 2'))
@@ -43,10 +43,16 @@ interface RepositoryInterface {
 	 *	The 'op' key will contain one of the following operators: '=', '<', '>', '<=', '>=', '<>', '!=','like', 'not like', 'is in', 'is not in'.
 	 *	when the 'operator' is 'like' the 'data' already contains the '%' character in the appropiate position.
 	 *	The 'data' key will contain the string searched by the user.
+	 * @param  string $nodeId
+	 *	Node id (used only when the treeGrid option is set to true)
+	 * @param  string $nodeLevel
+	 *	Node level (used only when the treeGrid option is set to true)
+	 * @param  boolean $exporting
+	 *	Flag that determines if the data will be exported (used only when the treeGrid option is set to true)
 	 * @return array
 	 *	An array of array, each array will have the data of a row.
 	 *  Example: array(array("column1" => "1-1", "column2" => "1-2"), array("column1" => "2-1", "column2" => "2-2"))
 	 */
-	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array());
+	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array(), $nodeId = null, $nodeLevel = null, $exporting);
 
 }
