@@ -935,6 +935,24 @@ class JqGridRender implements RenderInterface {
 			$fileName = $this->gridId;
 		}
 
+		if(isset($this->options['groupingView']))
+		{
+			$groupingView = $this->options['groupingView'];
+		}
+		else
+		{
+			$groupingView = array();
+		}
+
+		if(isset($this->groupHeaderOptions['groupHeaders']))
+		{
+			$groupHeaders = $this->groupHeaderOptions['groupHeaders'];
+		}
+		else
+		{
+			$groupHeaders = array();
+		}
+
 		$html = '';
 		$html .= '<form method="' . $this->options['mtype'] . '" action="'. $this->options['url'] . '" accept-charset="UTF-8" id="'. $this->gridId .'ExportForm">
 								<input name="_token" type="hidden" value="' . $this->token . '">
@@ -946,6 +964,8 @@ class JqGridRender implements RenderInterface {
 								<input id="'. $this->gridId .'Rows" name="pivotRows" type="hidden">
 								<input name="fileProperties" type="hidden" value=\'' . json_encode($this->fileProperties) . '\'>
 								<input name="sheetProperties" type="hidden" value=\'' . json_encode($this->sheetProperties) . '\'>
+								<input name="groupingView" type="hidden" value=\'' . json_encode($groupingView) . '\'>
+								<input name="groupHeaders" type="hidden" value=\'' . json_encode($groupHeaders) . '\'>
 							</form>';
 
 		if($createTableElement)

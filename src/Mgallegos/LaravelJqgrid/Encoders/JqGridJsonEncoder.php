@@ -254,10 +254,37 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 				$Excel->sheet($postedData['name'], function($Sheet) use ($rows, $postedData)
 				{
+					$groupingView = json_decode($postedData['groupingView'], true);
+					$groupFieldName = '';
+
 					$columnCounter = 0;
 
 					foreach (json_decode($postedData['model'], true) as $a => $model)
 					{
+						if(!empty($groupingView) && $groupingView['groupField'][0] == $model['name'])
+						{
+							if(isset($model['hidden']) && $model['hidden'] === true)
+							{
+								$groupFieldHidden = true;
+							}
+							else
+							{
+								$groupFieldHidden = false;
+							}
+
+							$groupFieldName = $model['name'];
+
+							if(isset($model['label']))
+							{
+								$groupFieldLabel = $model['label'];
+							}
+							else
+							{
+								$groupFieldLabel = $model['name'];
+							}
+
+						}
+
 						if(isset($model['hidden']) && $model['hidden'] !== true)
 						{
 							$columnCounter++;
@@ -270,9 +297,9 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 						if(empty($postedData['pivot']))
 						{
-							foreach ($rows as $b => &$row)
+							foreach ($rows as $index => &$row)
 							{
-								if(isset($model['hidden']) && $model['hidden'] === true)
+								if(isset($model['hidden']) && $model['hidden'] === true && $model['name'] != $groupFieldName)
 								{
 									unset($row[$model['name']]);
 								}
@@ -306,6 +333,76 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						$method = 'set' . ucfirst($key);
 
 						$Sheet->$method($value);
+					}
+
+					if(!empty($groupingView))
+					{
+						$groupedRows = $groupedRowsNumbers = array();
+						$rowCounter = 0;
+
+						foreach ($rows as $index => &$row)
+						{
+							if($rowCounter == 0)
+							{
+								$currentgroupFieldValue = $row[$groupFieldLabel];
+
+								if($groupFieldHidden)
+								{
+									unset($row[$groupFieldLabel]);
+								}
+
+								$firstColumnName = key($row);
+
+								$groupedRow = $row;
+
+								foreach ($groupedRow as $label => &$cell)
+								{
+									if($firstColumnName == $label)
+									{
+										$cell = $currentgroupFieldValue;
+									}
+									else
+									{
+										$cell = '';
+									}
+								}
+
+								$rowCounter = 2;
+
+								array_push($groupedRows, $groupedRow);
+								array_push($groupedRowsNumbers, $rowCounter);
+							}
+							else
+							{
+								if($row[$groupFieldLabel] != $currentgroupFieldValue)
+								{
+									$currentgroupFieldValue = $groupedRow[$firstColumnName]  = $row[$groupFieldLabel];
+
+									$rowCounter++;
+
+									array_push($groupedRows, $groupedRow);
+									array_push($groupedRowsNumbers, $rowCounter);
+								}
+
+								if($groupFieldHidden)
+								{
+									unset($row[$groupFieldLabel]);
+								}
+							}
+
+							array_push($groupedRows, $row);
+
+							$rowCounter++;
+						}
+
+						$lastCellLetter = $this->num_to_letter($columnCounter, true);
+
+						foreach ($groupedRowsNumbers as $index => $groupedRowsNumber)
+						{
+							$Sheet->mergeCells("A$groupedRowsNumber:$lastCellLetter$groupedRowsNumber");
+						}
+
+						$rows = $groupedRows;
 					}
 
 					$Sheet->fromArray($rows);
