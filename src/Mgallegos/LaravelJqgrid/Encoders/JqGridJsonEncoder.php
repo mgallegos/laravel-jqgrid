@@ -255,6 +255,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 				$Excel->sheet($postedData['name'], function($Sheet) use ($rows, $postedData)
 				{
 					$groupingView = json_decode($postedData['groupingView'], true);
+
+					$groupHeaders = json_decode($postedData['groupHeaders'], true);
+
+					$columnsPositions = array();
+
 					$groupFieldName = '';
 
 					$columnCounter = 0;
@@ -288,6 +293,8 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						if(isset($model['hidden']) && $model['hidden'] !== true)
 						{
 							$columnCounter++;
+
+							$columnsPositions[$model['name']] = $columnCounter;
 						}
 
 						if(isset($model['hidedlg']) && $model['hidedlg'] === true)
@@ -369,6 +376,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 								$rowCounter = 2;
 
+								if(!empty($groupHeaders))
+								{
+									$rowCounter++;
+								}
+
 								array_push($groupedRows, $groupedRow);
 								array_push($groupedRowsNumbers, $rowCounter);
 							}
@@ -405,9 +417,39 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						$rows = $groupedRows;
 					}
 
-					$Sheet->fromArray($rows);
+					if(empty($groupHeaders))
+					{
+						$Sheet->fromArray($rows);
+					}
+					else
+					{
+						$headers = $firstHeader = array();
 
-					$Sheet->row(1, function($Row) {
+						for ($i = 0; $i < count($columnsPositions); $i++)
+						{
+							$firstHeader[$i] = '';
+						}
+
+						foreach ($groupHeaders as $index => $groupHeader)
+						{
+							$firstHeader[$columnsPositions[$groupHeader['startColumnName']] - 1] = $groupHeader['titleText'];
+
+							$Sheet->mergeCells($this->num_to_letter($columnsPositions[$groupHeader['startColumnName']], true) . '1:' . $this->num_to_letter($columnsPositions[$groupHeader['startColumnName']] + $groupHeader['numberOfColumns'] - 1, true) . '1');
+						}
+
+						array_push($headers, $firstHeader);
+						array_push($headers, array_keys($rows[0]));
+
+						$Sheet->fromArray(array_merge($headers, $rows), null, 'A1', false, false);
+
+						$Sheet->row(2, function($Row)
+						{
+						  $Row->setFontWeight('bold');
+						});
+					}
+
+					$Sheet->row(1, function($Row)
+					{
 					  $Row->setFontWeight('bold');
 					});
 				});
