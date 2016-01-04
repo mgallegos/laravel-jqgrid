@@ -258,7 +258,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 					$groupHeaders = json_decode($postedData['groupHeaders'], true);
 
-					$columnsPositions = array();
+					$columnsPositions = $summaryTypes = array();
 
 					$groupFieldName = '';
 
@@ -287,7 +287,6 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 							{
 								$groupFieldLabel = $model['name'];
 							}
-
 						}
 
 						if(isset($model['hidden']) && $model['hidden'] !== true)
@@ -300,6 +299,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						if(isset($model['hidedlg']) && $model['hidedlg'] === true)
 						{
 							continue;
+						}
+
+						if(isset($model['summaryType']))
+						{
+							$summaryTypes[isset($model['label'])?$model['label']:$model['name']] = $model['summaryType'];
 						}
 
 						if(empty($postedData['pivot']))
@@ -329,7 +333,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 						if(isset($model['align']) && isset($model['hidden']) && $model['hidden'] !== true)
 						{
-							$Sheet->getStyle($this->num_to_letter($columnCounter, true))->getAlignment()->applyFromArray(
+							$Sheet->getStyle($this->numToLetter($columnCounter, true))->getAlignment()->applyFromArray(
 									array('horizontal' => $model['align'])
 							);
 						}
@@ -342,9 +346,12 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						$Sheet->$method($value);
 					}
 
+					$subTotalGroupedRowsNumber = array();
+
 					if(!empty($groupingView))
 					{
-						$groupedRows = $groupedRowsNumbers = array();
+						$groupedRows = $groupedRowsNumbers = $subTotalGroupedRow = $currentSubTotalGroupedRow = array();
+
 						$rowCounter = 0;
 
 						foreach ($rows as $index => &$row)
@@ -372,7 +379,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 									{
 										$cell = '';
 									}
+
+									$subTotalGroupedRow[$label] = '';
 								}
+
+								$currentSubTotalGroupedRow = $subTotalGroupedRow;
 
 								$rowCounter = 2;
 
@@ -392,6 +403,25 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 									$rowCounter++;
 
+									if(!empty($summaryTypes))
+									{
+										foreach ($summaryTypes as $column => $summaryType)
+										{
+											switch ($summaryType) {
+												case 'count':
+													$currentSubTotalGroupedRow[$column] = "($currentSubTotalGroupedRow[$column]) total";
+													break;
+											}
+										}
+
+										array_push($groupedRows, $currentSubTotalGroupedRow);
+										array_push($subTotalGroupedRowsNumber, $rowCounter);
+
+										$currentSubTotalGroupedRow = $subTotalGroupedRow;
+
+										$rowCounter++;
+									}
+
 									array_push($groupedRows, $groupedRow);
 									array_push($groupedRowsNumbers, $rowCounter);
 								}
@@ -402,12 +432,60 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 								}
 							}
 
+							if(!empty($summaryTypes))
+							{
+								foreach ($summaryTypes as $column => $summaryType)
+								{
+									switch ($summaryType) {
+										case 'sum':
+											if(empty($currentSubTotalGroupedRow[$column]))
+											{
+												$currentSubTotalGroupedRow[$column] = $row[$column] + 0;
+											}
+											else
+											{
+												$currentSubTotalGroupedRow[$column] += $row[$column];
+											}
+											break;
+										case 'count':
+											if($currentSubTotalGroupedRow[$column] != 0 && empty($currentSubTotalGroupedRow[$column]))
+											{
+												$currentSubTotalGroupedRow[$column] = 0;
+											}
+											else
+											{
+												$currentSubTotalGroupedRow[$column] ++;
+											}
+											break;
+									}
+								}
+								//subtotal code
+								// $currentSubTotalGroupedRow
+								// var_dump($summaryTypes);die();
+								// array(3) { ["CÃ³d. Centro"]=> string(5) "count" ["DÃ©bito"]=> string(3) "sum" ["CrÃ©dito"]=> string(3) "sum" }
+							}
+
 							array_push($groupedRows, $row);
 
 							$rowCounter++;
 						}
 
-						$lastCellLetter = $this->num_to_letter($columnCounter, true);
+						if(!empty($summaryTypes))
+						{
+							foreach ($summaryTypes as $column => $summaryType)
+							{
+								switch ($summaryType) {
+									case 'count':
+										$currentSubTotalGroupedRow[$column] = "($currentSubTotalGroupedRow[$column]) total";
+										break;
+								}
+							}
+
+							array_push($groupedRows, $currentSubTotalGroupedRow);
+							array_push($subTotalGroupedRowsNumber, ++$rowCounter);
+						}
+
+						$lastCellLetter = $this->numToLetter($columnCounter, true);
 
 						foreach ($groupedRowsNumbers as $index => $groupedRowsNumber)
 						{
@@ -419,7 +497,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 					if(empty($groupHeaders))
 					{
-						$Sheet->fromArray($rows);
+						$Sheet->fromArray($rows, null, 'A1', true, true);
 					}
 					else
 					{
@@ -434,13 +512,13 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						{
 							$firstHeader[$columnsPositions[$groupHeader['startColumnName']] - 1] = $groupHeader['titleText'];
 
-							$Sheet->mergeCells($this->num_to_letter($columnsPositions[$groupHeader['startColumnName']], true) . '1:' . $this->num_to_letter($columnsPositions[$groupHeader['startColumnName']] + $groupHeader['numberOfColumns'] - 1, true) . '1');
+							$Sheet->mergeCells($this->numToLetter($columnsPositions[$groupHeader['startColumnName']], true) . '1:' . $this->numToLetter($columnsPositions[$groupHeader['startColumnName']] + $groupHeader['numberOfColumns'] - 1, true) . '1');
 						}
 
 						array_push($headers, $firstHeader);
 						array_push($headers, array_keys($rows[0]));
 
-						$Sheet->fromArray(array_merge($headers, $rows), null, 'A1', false, false);
+						$Sheet->fromArray(array_merge($headers, $rows), null, 'A1', true, false);
 
 						$Sheet->row(2, function($Row)
 						{
@@ -452,6 +530,18 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 					{
 					  $Row->setFontWeight('bold');
 					});
+
+					foreach ($subTotalGroupedRowsNumber as $index => $number)
+					{
+						$Sheet->row($number, function($Row)
+						{
+						  $Row->setFontWeight('bold');
+						});
+					}
+
+					// $Sheet->setColumnFormat(array(
+			    // 	'E' => '0.00'
+					// ));
 				});
 			})->export($postedData['exportFormat']);
 		}
@@ -464,12 +554,12 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 	/**
 	* Takes a number and converts it to a-z,aa-zz,aaa-zzz, etc with uppercase option
 	*
-	* @access	public
+	* @access	protected
 	* @param	int	number to convert
 	* @param	bool	upper case the letter on return?
 	* @return	string	letters from number input
 	*/
-	protected function num_to_letter($num, $uppercase = FALSE)
+	protected function numToLetter($num, $uppercase = FALSE)
 	{
 		$num -= 1;
 
