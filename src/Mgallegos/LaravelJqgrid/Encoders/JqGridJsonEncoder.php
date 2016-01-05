@@ -258,7 +258,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 					$groupHeaders = json_decode($postedData['groupHeaders'], true);
 
-					$columnsPositions = $summaryTypes = $modelLabels = $modelSelectFormattersValues = array();
+					$columnsPositions = $summaryTypes = $modelLabels = $modelSelectFormattersValues = $modelNumberFormatters = $numericColumns = array();
 
 					$groupFieldName = '';
 
@@ -334,6 +334,28 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 									}
 
 									break;
+								case 'integer':
+									$modelNumberFormatters[$model['name']] = '0';
+
+									array_push($numericColumns, isset($model['label'])?$model['label']:$model['name']);
+
+									break;
+								case 'number':
+								case 'currency':
+									if(isset($model['formatoptions']['prefix']))
+									{
+										$prefix = $model['formatoptions']['prefix'];
+									}
+									else
+									{
+										$prefix = '';
+									}
+
+									$modelNumberFormatters[$model['name']] = '"' . $prefix . '"#,##0.00';
+
+									array_push($numericColumns, isset($model['label'])?$model['label']:$model['name']);
+
+									break;
 							}
 						}
 
@@ -361,6 +383,14 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 								if(isset($currentRow[$label]))
 								{
 									$currentRow[$label] = isset($modelSelectFormatterValue[$currentRow[$label]])?$modelSelectFormatterValue[$currentRow[$label]]:$currentRow[$label];
+								}
+							}
+
+							foreach ($numericColumns as $index => $label)
+							{
+								if(isset($currentRow[$label]))
+								{
+									$currentRow[$label] = (float) $currentRow[$label];
 								}
 							}
 
@@ -463,35 +493,33 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 							if(!empty($summaryTypes))
 							{
-								foreach ($summaryTypes as $column => $summaryType)
+								foreach ($summaryTypes as $label => $summaryType)
 								{
 									switch ($summaryType) {
 										case 'sum':
-											if(empty($currentSubTotalGroupedRow[$column]))
+											if(empty($currentSubTotalGroupedRow[$label]))
 											{
-												$currentSubTotalGroupedRow[$column] = $row[$column] + 0;
+												$currentSubTotalGroupedRow[$label] = $row[$label] + 0;
 											}
 											else
 											{
-												$currentSubTotalGroupedRow[$column] += $row[$column];
+												$currentSubTotalGroupedRow[$label] += $row[$label];
 											}
+
 											break;
 										case 'count':
-											if($currentSubTotalGroupedRow[$column] != 0 && empty($currentSubTotalGroupedRow[$column]))
+											if($currentSubTotalGroupedRow[$label] != 0 && empty($currentSubTotalGroupedRow[$label]))
 											{
-												$currentSubTotalGroupedRow[$column] = 0;
+												$currentSubTotalGroupedRow[$label] = 0;
 											}
 											else
 											{
-												$currentSubTotalGroupedRow[$column] ++;
+												$currentSubTotalGroupedRow[$label] ++;
 											}
+
 											break;
 									}
 								}
-								//subtotal code
-								// $currentSubTotalGroupedRow
-								// var_dump($summaryTypes);die();
-								// array(3) { ["CÃ³d. Centro"]=> string(5) "count" ["DÃ©bito"]=> string(3) "sum" ["CrÃ©dito"]=> string(3) "sum" }
 							}
 
 							array_push($groupedRows, $row);
@@ -523,6 +551,15 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 						$rows = $groupedRows;
 					}
+
+					$columnFormats = array();
+
+					foreach ($modelNumberFormatters as $columnName => $format)
+					{
+						$columnFormats[$this->numToLetter($columnsPositions[$columnName], true)] = $format;
+					}
+
+					$Sheet->setColumnFormat($columnFormats);
 
 					if(empty($groupHeaders))
 					{
@@ -568,9 +605,6 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						});
 					}
 
-					// $Sheet->setColumnFormat(array(
-			    // 	'E' => '0.00'
-					// ));
 				});
 			})->export($postedData['exportFormat']);
 		}
