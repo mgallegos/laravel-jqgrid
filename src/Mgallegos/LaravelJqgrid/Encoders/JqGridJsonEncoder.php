@@ -258,7 +258,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 					$groupHeaders = json_decode($postedData['groupHeaders'], true);
 
-					$columnsPositions = $summaryTypes = array();
+					$columnsPositions = $summaryTypes = $modelLabels = $modelSelectFormattersValues = array();
 
 					$groupFieldName = '';
 
@@ -306,28 +306,34 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 							$summaryTypes[isset($model['label'])?$model['label']:$model['name']] = $model['summaryType'];
 						}
 
-						if(empty($postedData['pivot']))
+						if($model['hidden'] === false || $model['name'] == $groupFieldName)
 						{
-							foreach ($rows as $index => &$row)
+							if(isset($model['label']))
 							{
-								if(isset($model['hidden']) && $model['hidden'] === true && $model['name'] != $groupFieldName)
-								{
-									unset($row[$model['name']]);
-								}
-								else
-								{
-									if(isset($model['label']))
+								$modelLabels[$model['name']] = $model['label'];
+							}
+							else
+							{
+								$modelLabels[$model['name']] = $model['name'];
+							}
+						}
+
+						if(isset($model['formatter']))
+						{
+							switch ($model['formatter'])
+							{
+								case 'select':
+									if(isset($model['editoptions']['value']))
 									{
-										$row[$model['label']] = $row[$model['name']];
-										unset($row[$model['name']]);
+										foreach (explode(';', $model['editoptions']['value']) as $index => $value)
+										{
+											$temp = explode(':', $value);
+
+											$modelSelectFormattersValues[isset($model['label'])?$model['label']:$model['name']][$temp[0]] = $temp[1];
+										}
 									}
-									else
-									{
-										$temp = $row[$model['name']];
-										unset($row[$model['name']]);
-										$row[$model['name']] = $temp;
-									}
-								}
+
+									break;
 							}
 						}
 
@@ -336,6 +342,29 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 							$Sheet->getStyle($this->numToLetter($columnCounter, true))->getAlignment()->applyFromArray(
 									array('horizontal' => $model['align'])
 							);
+						}
+					}
+
+					if(empty($postedData['pivot']))
+					{
+						foreach ($rows as $index => &$row)
+						{
+							$currentRow = array();
+
+							foreach ($modelLabels as $columnName => $value)
+							{
+								$currentRow[$value] = $row[$columnName];
+							}
+
+							foreach ($modelSelectFormattersValues as $label => $modelSelectFormatterValue)
+							{
+								if(isset($currentRow[$label]))
+								{
+									$currentRow[$label] = isset($modelSelectFormatterValue[$currentRow[$label]])?$modelSelectFormatterValue[$currentRow[$label]]:$currentRow[$label];
+								}
+							}
+
+							$row = $currentRow;
 						}
 					}
 
