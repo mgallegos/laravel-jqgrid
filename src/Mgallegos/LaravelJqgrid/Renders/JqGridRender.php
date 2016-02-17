@@ -958,6 +958,8 @@ class JqGridRender implements RenderInterface {
 								<input name="_token" type="hidden" value="' . $this->token . '">
 								<input id="'. $this->gridId .'Name" name="name" type="hidden" value="'. $fileName .'">
 								<input id="'. $this->gridId .'Model" name="model" type="hidden">
+								<input id="'. $this->gridId .'Sidx" name="sidx" type="hidden">
+								<input id="'. $this->gridId .'Sord" name="sord" type="hidden">
 								<input id="'. $this->gridId .'ExportFormat" name="exportFormat" type="hidden" value="xls">
 								<input id="'. $this->gridId .'Filters" name="filters" type="hidden">
 								<input id="'. $this->gridId .'PivotFlag" name="pivot" type="hidden" value="' . $this->jqPivot . '">
@@ -1139,13 +1141,27 @@ class JqGridRender implements RenderInterface {
 	{
 
 		$code = '
-			var headers = [], rows = [], row, cellCounter, postData;
+			var headers = [], rows = [], row, cellCounter, postData, groupingView, sidx, sord;
 			jQuery("#' . $this->gridId . 'Model").val(JSON.stringify(jQuery("#' . $this->gridId . '").getGridParam("colModel")));
 			postData = jQuery("#' . $this->gridId . '").getGridParam("postData");
 			if(postData["filters"] != undefined)
 			{
 				jQuery("#' . $this->gridId . 'Filters").val(postData["filters"]);
 			}
+			groupingView = jQuery("#' . $this->gridId . '").getGridParam("groupingView");
+			sidx = jQuery("#' . $this->gridId . '").getGridParam("sortname");
+			if(sidx == null) sidx = "";
+			sord = jQuery("#' . $this->gridId . '").getGridParam("sortorder");
+			if(sord == null) sord = "";
+			if(groupingView.groupField.length > 0)
+			{
+				jQuery("#' . $this->gridId . 'Sidx").val(groupingView.groupField[0] + " " + groupingView.groupOrder[0] + "," + " " + sidx);
+			}
+			else
+			{
+				jQuery("#' . $this->gridId . 'Sidx").val(sidx);
+			}
+			jQuery("#' . $this->gridId . 'Sord").val(sord);
 		';
 
 		$jqPivot = '
