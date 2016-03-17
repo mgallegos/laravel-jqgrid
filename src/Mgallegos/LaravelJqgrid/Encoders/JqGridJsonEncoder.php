@@ -230,6 +230,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		if(empty($postedData['pivotRows']))
 		{
 			$rows = $Repository->getRows($limit, $start, $sidx, $sord, $filters['rules'], $nodeId, $nodeLevel, $exporting);
+
+			if($count < count($rows))
+			{
+				$count = count($rows);
+			}
 		}
 		else
 		{
