@@ -56,6 +56,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 			$page = 1;
 		}
 
+		if($page == 0)
+		{
+			$page = 1;
+		}
+
 		if(isset($postedData['rows']))
 		{
 			$limit = $postedData['rows']; // get how many rows we want to have into the grid
