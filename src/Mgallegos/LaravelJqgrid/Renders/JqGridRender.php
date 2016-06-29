@@ -928,7 +928,7 @@ class JqGridRender implements RenderInterface {
 
 		if(isset($this->options['filename']))
 		{
-			$fileName = substr($this->options['filename'],0,31);
+			$fileName = mb_substr($this->options['filename'],0,31);
 		}
 		else
 		{
