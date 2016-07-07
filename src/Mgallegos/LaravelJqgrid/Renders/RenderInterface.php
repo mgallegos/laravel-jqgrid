@@ -217,4 +217,13 @@ interface RenderInterface {
 	 */
 	public function renderGrid($script = true, $createTableElement = true, $createPagerElement = true, $echo = true);
 
+	/**
+	 * Add a export-type at the last position in exportButtonsOptions .
+	 *
+	 * @param  array $properties
+	 * 	An array with required parameters [ typeButtonVisible, typeButtonText, typeIcon]
+	 * @return $this
+	 *  Returns an object, allowing the calls to be chained together in a single statement
+	 */
+	public function addExport(array $exportProperties);
 }
