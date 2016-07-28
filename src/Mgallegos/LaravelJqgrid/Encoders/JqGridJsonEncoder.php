@@ -184,6 +184,9 @@ class JqGridJsonEncoder implements RequestedDataInterface {
             $filter['op'] = 'is not null';
             $filter['data'] = '';
            	break;
+           				case 'btw': //between
+						$filter['op'] = 'between';
+						break;
 				}
 			}
 		}
