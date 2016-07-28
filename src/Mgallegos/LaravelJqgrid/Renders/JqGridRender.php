@@ -1038,7 +1038,7 @@ class JqGridRender implements RenderInterface {
 			$script .= 'jQuery("#' . $this->gridId . '").jqGrid("setFrozenColumns");';
 		}
 
-		$script = str_replace(array('"###','###"','\"'), array('', '', '"'), $script);
+		$script = str_replace(array('"###','###"','\"', '"JS>>>', '<<<JS"'), array('', '', '"', '' ,''), $script);
 
 		$this->reset();
 
