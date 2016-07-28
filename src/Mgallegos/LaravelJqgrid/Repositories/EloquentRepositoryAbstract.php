@@ -271,15 +271,11 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 						throw new \Exception('Invalid between format');
 					}
 
-					\Log::info($from.' - '.$to);
 					if( $from == $to)
 					{
-						\Log::info($filter['field'] . ' = '. $from);
-
 						$query->where($filter['field'], $from);
 					}else
 					{
-						\Log::info($filter['field'] . ' Between '. $from . ' and ' . $to);
 						//$query->whereBetween($filter['field'], array($from, $to));
 						$query->where($filter['field'], '>=', $from);
 						$query->where($filter['field'], '<=', $to);
