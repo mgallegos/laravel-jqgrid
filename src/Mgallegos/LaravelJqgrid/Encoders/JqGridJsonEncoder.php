@@ -388,7 +388,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 							foreach ($modelLabels as $columnName => $value)
 							{
-								$currentRow[$value] = $row[$columnName];
+								$currentRow[$value] = isset($row[$columnName])?$row[$columnName]:'';
 							}
 
 							foreach ($modelSelectFormattersValues as $label => $modelSelectFormatterValue)
