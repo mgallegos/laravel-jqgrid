@@ -170,7 +170,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						break;
 					case 'cn': //contains
 						$filter['op'] = 'like';
-						$filter['data'] = '%' . $filter['data'] . '%';
+						$filter['data'] = '%' . str_replace(' ', '%', $filter['data']) . '%';
+						break;
+					case 'cnpg': //contains PostgreSQL
+						$filter['op'] = 'ilike';
+						$filter['data'] = '%' . str_replace(' ', '%', $filter['data']) . '%';
 						break;
 					case 'nc': //does not contains
 						$filter['op'] = 'not like';
