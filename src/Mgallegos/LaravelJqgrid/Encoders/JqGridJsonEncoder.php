@@ -170,7 +170,11 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						break;
 					case 'cn': //contains
 						$filter['op'] = 'like';
-						$filter['data'] = '%' . $filter['data'] . '%';
+						$filter['data'] = '%' . str_replace(' ', '%', $filter['data']) . '%';
+						break;
+					case 'cnpg': //contains PostgreSQL
+						$filter['op'] = 'ilike';
+						$filter['data'] = '%' . str_replace(' ', '%', $filter['data']) . '%';
 						break;
 					case 'nc': //does not contains
 						$filter['op'] = 'not like';
@@ -388,7 +392,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 							foreach ($modelLabels as $columnName => $value)
 							{
-								$currentRow[$value] = $row[$columnName];
+								$currentRow[$value] = isset($row[$columnName])?$row[$columnName]:'';
 							}
 
 							foreach ($modelSelectFormattersValues as $label => $modelSelectFormatterValue)
