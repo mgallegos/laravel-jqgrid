@@ -9,9 +9,7 @@
 
 namespace Mgallegos\LaravelJqgrid\Repositories;
 
-abstract class EloquentRepositoryAbstract implements RepositoryInterface{
-
-
+abstract class EloquentRepositoryAbstract implements GridRepositoryInterface{
 	/**
 	 * Database
 	 *
@@ -103,35 +101,6 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 					continue;
 				}
 
-				if($filter['op'] == 'between')
-				{
-					if(strpos($filter['data'], ' - ') !== false)
-					{
-						list($from, $to) = explode(' - ', $filter['data'], 2);
-
-						if(!$from or !$to)
-						{
-							throw new \Exception('Invalid between format');
-						}
-					}
-					else
-					{
-						throw new \Exception('Invalid between format');
-					}
-
-					if( $from == $to)
-					{
-						$query->where($filter['field'], $from);
-					}else
-					{
-						//$query->whereBetween($filter['field'], array($from, $to));
-						$query->where($filter['field'], '>=', $from);
-						$query->where($filter['field'], '<=', $to);
-					}
-
-					continue;
-				}
-				
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 		})
@@ -255,34 +224,6 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 					continue;
 				}
 
-				if($filter['op'] == 'between')
-				{
-					if(strpos($filter['data'], ' - ') !== false)
-					{
-						list($from, $to) = explode(' - ', $filter['data'], 2);
-
-						if(!$from or !$to)
-						{
-							throw new \Exception('Invalid between format');
-						}
-					}
-					else
-					{
-						throw new \Exception('Invalid between format');
-					}
-
-					if( $from == $to)
-					{
-						$query->where($filter['field'], $from);
-					}else
-					{
-						//$query->whereBetween($filter['field'], array($from, $to));
-						$query->where($filter['field'], '>=', $from);
-						$query->where($filter['field'], '<=', $to);
-					}
-					continue;
-				}
-				
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 

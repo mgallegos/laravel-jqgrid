@@ -9,7 +9,7 @@
 
 namespace Mgallegos\LaravelJqgrid\Encoders;
 
-use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
+use Mgallegos\LaravelJqgrid\Repositories\GridRepositoryInterface;
 
 interface RequestedDataInterface {
 	
@@ -22,7 +22,7 @@ interface RequestedDataInterface {
 	 *	All jqGrid posted data
 	 * @return void
 	 */
-	public function encodeRequestedData(RepositoryInterface $Repository,  $postedData);
+	public function encodeRequestedData(GridRepositoryInterface $Repository,  $postedData);
 	
 }
 
