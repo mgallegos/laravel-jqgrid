@@ -260,6 +260,16 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 		if($exporting)
 		{
+			$method_name = 'export_to_'.$postedData['exportFormat'];
+			if(method_exists($Repository, $method_name) )
+			{
+				$Repository->$method_name(array_merge(
+									['rows'=>$rows],
+									['postedData'=>$postedData]
+								      )
+							 );
+			}
+			
 			$this->Excel->create($postedData['name'], function($Excel) use ($rows, $postedData)
 			{
 				foreach (json_decode($postedData['fileProperties'], true) as $key => $value)
