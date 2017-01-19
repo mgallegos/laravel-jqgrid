@@ -1032,7 +1032,6 @@ class JqGridRender implements RenderInterface {
 			$script .= 'jQuery("#' . $this->gridId . '").jqGrid("navSeparatorAdd", "#' .  $this->options['pager'] . '");';
 		}
 
-
 		if($this->filterToolbarButtonsOptions['filterToolbar'])
 		{
 			$script .= 'jQuery("#' . $this->gridId . '").jqGrid("filterToolbar", ' .  json_encode($this->filterToolbarOptions, JSON_FORCE_OBJECT) . ');';
@@ -1155,11 +1154,12 @@ class JqGridRender implements RenderInterface {
 	}
 
 	/**
-	* Get exporter's javascript code.
-	*
-	* @return void
-	*/
-	protected function getJavascriptExportFunctionCode(string $exportFormat)
+	 * Get exporter's javascript code.
+	 *
+	 * @param  string $exportFormat
+	 * @return void
+	 */
+	protected function getJavascriptExportFunctionCode($exportFormat)
 	{
 		$code = 'jQuery("#' . $this->gridId . '").jqGrid("navButtonAdd", "#' .  $this->options['pager'];
 		$code .= '",{"id": "' . $this->gridId . ucfirst($exportFormat) . 'Button", "caption":"' . $this->exportButtonsOptions[$exportFormat . 'ButtonText'];
@@ -1177,43 +1177,43 @@ class JqGridRender implements RenderInterface {
 		';
 
 		$code .= '
-		groupingView = jQuery("#' . $this->gridId . '").getGridParam("groupingView");
-		sidx = jQuery("#' . $this->gridId . '").getGridParam("sortname");
-		if(sidx == null) sidx = "";
-		sord = jQuery("#' . $this->gridId . '").getGridParam("sortorder");
-		if(sord == null) sord = "";
-		if(groupingView.groupField.length > 0)
-		{
-			jQuery("#' . $this->gridId . 'Sidx").val(groupingView.groupField[0] + " " + groupingView.groupOrder[0] + "," + " " + sidx);
-		}
-		else
-		{
-			jQuery("#' . $this->gridId . 'Sidx").val(sidx);
-		}
-		jQuery("#' . $this->gridId . 'Sord").val(sord);
+			groupingView = jQuery("#' . $this->gridId . '").getGridParam("groupingView");
+			sidx = jQuery("#' . $this->gridId . '").getGridParam("sortname");
+			if(sidx == null) sidx = "";
+			sord = jQuery("#' . $this->gridId . '").getGridParam("sortorder");
+			if(sord == null) sord = "";
+			if(groupingView.groupField.length > 0)
+			{
+				jQuery("#' . $this->gridId . 'Sidx").val(groupingView.groupField[0] + " " + groupingView.groupOrder[0] + "," + " " + sidx);
+			}
+			else
+			{
+				jQuery("#' . $this->gridId . 'Sidx").val(sidx);
+			}
+			jQuery("#' . $this->gridId . 'Sord").val(sord);
 		';
 
 		if($this->jqPivot)
 		{
 			$code .= '
-			jQuery.each($("#gbox_' . $this->gridId . '").find(".ui-jqgrid-sortable"), function( index, header )
-			{
-				headers.push(jQuery(header).text());
-			});
-			jQuery.each($("#gview_' . $this->gridId . '").find(".ui-widget-content"), function( index, gridRows )
-			{
-				row = {}, cellCounter = 0;
-				jQuery.each($(gridRows).find("td"), function( index, cell)
+				jQuery.each($("#gbox_' . $this->gridId . '").find(".ui-jqgrid-sortable"), function( index, header )
 				{
-					row[headers[cellCounter++]] = $(cell).text();
+					headers.push(jQuery(header).text());
 				});
-				for (i = cellCounter; i < headers.length; i++) {
-						row[headers[i]] = "";
-				}
-				rows.push(row);
-			});
-			jQuery("#' . $this->gridId . 'Rows").val(JSON.stringify(rows));
-			';
+				jQuery.each($("#gview_' . $this->gridId . '").find(".ui-widget-content"), function( index, gridRows )
+				{
+					row = {}, cellCounter = 0;
+					jQuery.each($(gridRows).find("td"), function( index, cell)
+					{
+						row[headers[cellCounter++]] = $(cell).text();
+					});
+					for (i = cellCounter; i < headers.length; i++) {
+							row[headers[i]] = "";
+					}
+					rows.push(row);
+				});
+				jQuery("#' . $this->gridId . 'Rows").val(JSON.stringify(rows));
+				';
 		}
 
 		$code .= ' jQuery("#' . $this->gridId . 'ExportFormat").val("' . $exportFormat . '");';
