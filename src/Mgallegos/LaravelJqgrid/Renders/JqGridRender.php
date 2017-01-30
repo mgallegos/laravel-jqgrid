@@ -775,6 +775,30 @@ class JqGridRender implements RenderInterface {
 	}
 
 	/**
+	* Set a export button option
+	*
+	* @param  string $option
+	* 	A valid export button option: xlsButtonVisible, xlsButtonText, xlsIcon, csvButtonVisible, csvButtonText, csvIcon, srcDateFormat, newDateFormat
+	* @param  mixed $option
+	* 	A value of an option can be a string or boolean.
+	* @return $this
+	*  Returns an object, allowing the calls to be chained together in a single statement
+	*/
+	public function setExportButtonsOption($option, $value)
+	{
+		if(isset($this->exportButtonsOptions[$option]))
+		{
+			$this->exportButtonsOptions[$option] = $value;
+		}
+		else
+		{
+			$this->exportButtonsOptions = array_add($this->exportButtonsOptions, $option, $value);
+		}
+
+		return $this;
+	}
+
+	/**
 	* Set a Laravel Excel file property.
 	*
 	* @param  string $option
@@ -971,6 +995,8 @@ class JqGridRender implements RenderInterface {
 								<input id="'. $this->gridId .'Filters" name="filters" type="hidden">
 								<input id="'. $this->gridId .'PivotFlag" name="pivot" type="hidden" value="' . $this->jqPivot . '">
 								<input id="'. $this->gridId .'Rows" name="pivotRows" type="hidden">
+								<input id="'. $this->gridId .'SrcDateFormat" name="srcDateFormat" type="hidden">
+								<input id="'. $this->gridId .'NewDateFormat" name="newDateFormat" type="hidden">
 								<input name="fileProperties" type="hidden" value=\'' . json_encode($this->fileProperties) . '\'>
 								<input name="sheetProperties" type="hidden" value=\'' . json_encode($this->sheetProperties) . '\'>
 								<input name="groupingView" type="hidden" value=\'' . json_encode($groupingView) . '\'>
@@ -1214,6 +1240,16 @@ class JqGridRender implements RenderInterface {
 				});
 				jQuery("#' . $this->gridId . 'Rows").val(JSON.stringify(rows));
 				';
+		}
+
+		if(isset($this->exportButtonsOptions['srcDateFormat']))
+		{
+			$code .= ' jQuery("#' . $this->gridId . 'SrcDateFormat").val("' . $this->exportButtonsOptions['srcDateFormat'] . '");';
+		}
+
+		if(isset($this->exportButtonsOptions['newDateFormat']))
+		{
+			$code .= ' jQuery("#' . $this->gridId . 'NewDateFormat").val("' . $this->exportButtonsOptions['newDateFormat'] . '");';
 		}
 
 		$code .= ' jQuery("#' . $this->gridId . 'ExportFormat").val("' . $exportFormat . '");';

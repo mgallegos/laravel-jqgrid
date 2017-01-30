@@ -121,10 +121,12 @@ return array(
 	| csvButtonVisible: show or hide the csv export button
 	| csvButtonText: text of the csv export button
 	| csvIcon: csv icon (jquery ui icon)
+	| srcDateFormat: source (database) date format (php available formats: http://php.net/manual/en/datetime.formats.date.php)
+	| newDateFormat: new date format (php available formats: http://php.net/manual/en/datetime.formats.date.php)
 	|
 	*/
 
-	'default_export_buttons_options' => array('xlsButtonVisible' => true, 'xlsButtonText' => 'xls', 'xlsIcon' => 'ui-icon-arrowthickstop-1-s', 'csvButtonVisible' => true, 'csvButtonText' => 'csv', 'csvIcon' => 'ui-icon-arrowthickstop-1-s'),
+	'default_export_buttons_options' => array('xlsButtonVisible' => true, 'xlsButtonText' => 'xls', 'xlsIcon' => 'ui-icon-arrowthickstop-1-s', 'csvButtonVisible' => true, 'csvButtonText' => 'csv', 'csvIcon' => 'ui-icon-arrowthickstop-1-s', 'srcDateFormat' => 'Y-m-d', 'newDateFormat' => 'm/d/Y'),
 
 	/*
 	|--------------------------------------------------------------------------

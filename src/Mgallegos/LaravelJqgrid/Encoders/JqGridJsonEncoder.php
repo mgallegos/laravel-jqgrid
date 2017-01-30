@@ -11,6 +11,7 @@ namespace Mgallegos\LaravelJqgrid\Encoders;
 
 use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
 use Maatwebsite\Excel\Excel;
+use Carbon\Carbon;
 use Exception;
 
 class JqGridJsonEncoder implements RequestedDataInterface {
@@ -269,7 +270,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 								      )
 							 );
 			}
-			
+
 			$this->Excel->create($postedData['name'], function($Excel) use ($rows, $postedData)
 			{
 				foreach (json_decode($postedData['fileProperties'], true) as $key => $value)
@@ -383,6 +384,32 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 									array_push($numericColumns, isset($model['label'])?$model['label']:$model['name']);
 
 									break;
+								case 'date':
+									if((isset($model['formatoptions']['srcformat']) || $postedData['srcDateFormat']) && (isset($model['formatoptions']['newformat']) || $postedData['newDateFormat']))
+									{
+										if(isset($model['formatoptions']['srcformat']))
+										{
+											$srcformat = $model['formatoptions']['srcformat'];
+										}
+										else
+										{
+											$srcformat = $postedData['srcDateFormat'];
+										}
+
+										if(isset($model['formatoptions']['newformat']))
+										{
+											$newformat = $model['formatoptions']['newformat'];
+										}
+										else
+										{
+											$newformat = $postedData['newDateFormat'];
+										}
+
+										// $modelDateFormatters[$model['name']] = array('srcformat' => $srcformat, 'newformat' => $newformat);
+										$modelDateFormatters[isset($model['label'])?$model['label']:$model['name']] = array('srcformat' => $srcformat, 'newformat' => $newformat);
+									}
+
+									break;
 							}
 						}
 
@@ -410,6 +437,14 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 								if(isset($currentRow[$label]))
 								{
 									$currentRow[$label] = isset($modelSelectFormatterValue[$currentRow[$label]])?$modelSelectFormatterValue[$currentRow[$label]]:$currentRow[$label];
+								}
+							}
+
+							foreach ($modelDateFormatters as $label => $modelDateFormatter)
+							{
+								if(isset($currentRow[$label]) && !empty($currentRow[$label]))
+								{
+									$currentRow[$label] = Carbon::createFromFormat($modelDateFormatter['srcformat'], $currentRow[$label])->format($modelDateFormatter['newformat']);
 								}
 							}
 
