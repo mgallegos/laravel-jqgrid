@@ -997,6 +997,7 @@ class JqGridRender implements RenderInterface {
 								<input id="'. $this->gridId .'Rows" name="pivotRows" type="hidden">
 								<input id="'. $this->gridId .'SrcDateFormat" name="srcDateFormat" type="hidden">
 								<input id="'. $this->gridId .'NewDateFormat" name="newDateFormat" type="hidden">
+								<input id="'. $this->gridId .'FotterRow" name="fotterRow" type="hidden">
 								<input name="fileProperties" type="hidden" value=\'' . json_encode($this->fileProperties) . '\'>
 								<input name="sheetProperties" type="hidden" value=\'' . json_encode($this->sheetProperties) . '\'>
 								<input name="groupingView" type="hidden" value=\'' . json_encode($groupingView) . '\'>
@@ -1241,6 +1242,23 @@ class JqGridRender implements RenderInterface {
 				jQuery("#' . $this->gridId . 'Rows").val(JSON.stringify(rows));
 				';
 		}
+		else
+		{
+			//Include footer row if exists
+			$code .= '
+				jQuery.each($("#gbox_' . $this->gridId . '").find(".ui-jqgrid-sortable").filter(":visible"), function( index, header )
+				{
+					headers.push(jQuery(header).text());
+				});
+				row = {}, cellCounter = 0;
+				jQuery.each($("#gview_' . $this->gridId . '").find(".footrow").find("td").filter(":visible"), function( index, cell)
+				{
+					row[headers[cellCounter++]] = $(cell).text();
+				});
+				jQuery("#' . $this->gridId . 'FotterRow").val(JSON.stringify(row));
+			';
+		}
+
 
 		if(isset($this->exportButtonsOptions['srcDateFormat']))
 		{

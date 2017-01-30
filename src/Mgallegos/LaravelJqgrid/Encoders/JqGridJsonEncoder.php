@@ -262,13 +262,15 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		if($exporting)
 		{
 			$method_name = 'export_to_'.$postedData['exportFormat'];
+
 			if(method_exists($Repository, $method_name) )
 			{
-				$Repository->$method_name(array_merge(
-									['rows'=>$rows],
-									['postedData'=>$postedData]
-								      )
-							 );
+				$Repository->$method_name(
+					array_merge(
+						['rows'=> $rows],
+						['postedData'=> $postedData]
+		      )
+			 	);
 			}
 
 			$this->Excel->create($postedData['name'], function($Excel) use ($rows, $postedData)
@@ -623,14 +625,22 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 					$Sheet->setColumnFormat($columnFormats);
 
+					// var_dump($rows);die();
+					$footerRow = json_decode($postedData['fotterRow'], true);
+
+					if(!empty($footerRow))
+					{
+						array_push($rows, $footerRow);
+					}
+
+					$headers = $firstHeader = array();
+
 					if(empty($groupHeaders))
 					{
 						$Sheet->fromArray($rows, null, 'A1', true, true);
 					}
 					else
 					{
-						$headers = $firstHeader = array();
-
 						for ($i = 0; $i < count($columnsPositions); $i++)
 						{
 							$firstHeader[$i] = '';
@@ -664,6 +674,23 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 						$Sheet->row($number, function($Row)
 						{
 						  $Row->setFontWeight('bold');
+						});
+					}
+
+					if(!empty($footerRow))
+					{
+						if(!empty($headers))
+						{
+							$footerRowNumber = count($rows) + count($headers);
+						}
+						else
+						{
+							$footerRowNumber = count($rows) + 1;
+						}
+
+						$Sheet->row($footerRowNumber, function($Row)
+						{
+							$Row->setFontWeight('bold');
 						});
 					}
 
