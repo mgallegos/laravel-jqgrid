@@ -131,7 +131,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 
 					continue;
 				}
-				
+
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 		})
@@ -282,7 +282,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 					}
 					continue;
 				}
-				
+
 				$query->where($filter['field'], $filter['op'], $filter['data']);
 			}
 
@@ -320,7 +320,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 				}
 				else
 				{
-					$row['level'] = $nodeLevel + 1;
+					$row['level'] = (int)$nodeLevel + 1;
 				}
 
 				if($row[$this->leafColumn] == 0)
