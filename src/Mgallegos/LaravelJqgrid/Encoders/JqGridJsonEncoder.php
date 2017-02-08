@@ -9,6 +9,11 @@
 
 namespace Mgallegos\LaravelJqgrid\Encoders;
 
+use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingMaxDepthException;
+use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingStateMismatchException;
+use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingSyntaxErrorException;
+use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingUnexpectedControlCharException;
+use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingUnknownException;
 use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
 use Maatwebsite\Excel\Excel;
 use Carbon\Carbon;
@@ -699,7 +704,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		}
 		else
 		{
-				echo json_encode(array('page' => $page, 'total' => $totalPages, 'records' => $count, 'rows' => $rows));
+				echo $this->safe_json_encode(array('page' => $page, 'total' => $totalPages, 'records' => $count, 'rows' => $rows));
 		}
 	}
 
@@ -719,4 +724,59 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		$letter .= 	(floor($num/26) > 0) ? str_repeat($letter, floor($num/26)) : '';
 		return 		($uppercase ? strtoupper($letter) : $letter);
 	}
+
+    /**
+     * Safe JSON_ENCODE function that tries to deal with UTF8 chars or throws a valid exception.
+     *
+     * Lifted from http://stackoverflow.com/questions/10199017/how-to-solve-json-error-utf8-error-in-php-json-decode
+     * Based on: http://php.net/manual/en/function.json-last-error.php#115980
+     * @param $value
+     * @return string
+     */
+    protected function safe_json_encode($value){
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            $encoded = json_encode($value, JSON_PRETTY_PRINT);
+        } else {
+            $encoded = json_encode($value);
+        }
+        switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                return $encoded;
+            case JSON_ERROR_DEPTH:
+                throw new JsonEncodingMaxDepthException('Maximum stack depth exceeded');
+            case JSON_ERROR_STATE_MISMATCH:
+                throw new JsonEncodingStateMismatchException('Underflow or the modes mismatch');
+            case JSON_ERROR_CTRL_CHAR:
+                throw new JsonEncodingUnexpectedControlCharException('Unexpected control character found');
+            case JSON_ERROR_SYNTAX:
+                throw new JsonEncodingSyntaxErrorException('Syntax error, malformed JSON');
+            case JSON_ERROR_UTF8:
+                $clean = self::utf8ize($value);
+                return self::safe_json_encode($clean);
+            default:
+                throw new JsonEncodingUnknownException('Unknown error');
+
+        }
+    }
+
+    /**
+     * Clean the array passed in from UTF8 chars.
+     *
+     * Lifted from http://stackoverflow.com/questions/10199017/how-to-solve-json-error-utf8-error-in-php-json-decode
+     * Based on: http://php.net/manual/en/function.json-last-error.php#115980
+     *
+     * @param $mixed
+     * @return array|string
+     */
+    protected function utf8ize($mixed) {
+        if (is_array($mixed)) {
+            foreach ($mixed as $key => $value) {
+                $mixed[$key] = self::utf8ize($value);
+            }
+        } else if (is_string ($mixed)) {
+            return utf8_encode($mixed);
+        }
+        return $mixed;
+    }
+
 }
