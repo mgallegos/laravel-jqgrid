@@ -293,7 +293,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 					$groupHeaders = json_decode($postedData['groupHeaders'], true);
 
-					$columnsPositions = $summaryTypes = $modelLabels = $modelSelectFormattersValues = $modelNumberFormatters = $numericColumns = array();
+					$columnsPositions = $summaryTypes = $modelLabels = $modelSelectFormattersValues = $modelNumberFormatters = $modelDateFormatters = $numericColumns = array();
 
 					$groupFieldName = '';
 
