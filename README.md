@@ -11,7 +11,7 @@ Laravel jqGrid package allows you to easily integrate the popular jQuery Grid Pl
 * [Laravel 4 or 5 Framework](http://laravel.com/docs/installation)
 * [jQuery v2.0.0 or later](http://jquery.com/)
 * [Your choice of a jQuery UI theme](http://jqueryui.com/themeroller/#themeGallery)
-* [jQuery Grid Plugin v4.5.2 or later](http://www.trirand.com/blog/)
+* [Free JGrid Plugin](https://github.com/free-jqgrid/jqGrid) or [jQuery Grid Plugin](http://www.trirand.com/blog/)
 
 ## Features
 
