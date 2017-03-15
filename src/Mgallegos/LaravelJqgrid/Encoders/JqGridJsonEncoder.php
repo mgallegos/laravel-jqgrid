@@ -272,7 +272,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 			if(method_exists($Repository, $method_name) )
 			{
-				$Repository->$method_name(
+				return $Repository->$method_name(
 					array_merge(
 						['rows'=> $rows],
 						['postedData'=> $postedData]
