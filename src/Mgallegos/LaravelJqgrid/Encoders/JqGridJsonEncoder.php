@@ -249,7 +249,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		{
 			$rows = $Repository->getRows($limit, $start, $sidx, $sord, $filters['rules'], $nodeId, $nodeLevel, $exporting);
 
-			$rows = self::utf8ize($rows);
+			//$rows = self::utf8ize($rows);
 
 			if($count < count($rows))
 			{
