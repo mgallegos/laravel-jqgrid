@@ -630,7 +630,10 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 					foreach ($modelNumberFormatters as $columnName => $format)
 					{
-						$columnFormats[$this->numToLetter($columnsPositions[$columnName], true)] = $format;
+						if(isset($columnsPositions[$columnName]))
+						{
+							$columnFormats[$this->numToLetter($columnsPositions[$columnName], true)] = $format;
+						}
 					}
 
 					$Sheet->setColumnFormat($columnFormats);
