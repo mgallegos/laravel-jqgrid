@@ -38,9 +38,9 @@ There are three demos available:
 
 There are three tutorials available:
 
-* [Building a Pivot Grid and handling jqGrid events using Laravel jqGrid package](http://goo.gl/h7ul1P)
-* [Building a CRUD Web App with jqGrid forms using Laravel jqGrid package](http://goo.gl/gZHbGX)
-* [Building a CRUD Web App with a custom form using Laravel jqGrid package](http://goo.gl/gl4iqI)
+* Building a Pivot Grid and handling jqGrid events using Laravel jqGrid package(Not available)
+* Building a CRUD Web App with jqGrid forms using Laravel jqGrid package(Not available)
+* [Building a CRUD Web App with a custom form using Laravel jqGrid package](http://www.mariogallegos.com/cms/open-source-development/laravel-jqgrid/demo3)
 
 ## Aditional information
 
