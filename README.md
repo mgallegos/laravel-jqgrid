@@ -40,7 +40,7 @@ There are three tutorials available:
 
 * Building a Pivot Grid and handling jqGrid events using Laravel jqGrid package(Not available)
 * Building a CRUD Web App with jqGrid forms using Laravel jqGrid package(Not available)
-* [Building a CRUD Web App with a custom form using Laravel jqGrid package](http://www.mariogallegos.com/cms/tutorials/3)
+* [Building a CRUD Web App with a custom form using Laravel jqGrid package](http://www.mariogallegos.com/cms/tutorials)
 
 ## Aditional information
 
