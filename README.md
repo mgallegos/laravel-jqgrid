@@ -30,9 +30,9 @@ The complete documentation can be found at: [mariogallegos.com](http://goo.gl/Kr
 
 There are three demos available:
 
-* [Pivot Grid](http://goo.gl/LbOiI3)
-* [CRUD Web App with jqGrid forms](http://goo.gl/RK49UB)
-* [CRUD Web App with a custom form](http://goo.gl/f2IIQX)
+* Pivot Grid(Not available)
+* CRUD Web App with jqGrid forms(Not available)
+* [CRUD Web App with a custom form](http://www.mariogallegos.com/cms/open-source-development/laravel-jqgrid/demo3)
 
 ## Tutorials
 
@@ -40,7 +40,7 @@ There are three tutorials available:
 
 * Building a Pivot Grid and handling jqGrid events using Laravel jqGrid package(Not available)
 * Building a CRUD Web App with jqGrid forms using Laravel jqGrid package(Not available)
-* [Building a CRUD Web App with a custom form using Laravel jqGrid package](http://www.mariogallegos.com/cms/open-source-development/laravel-jqgrid/demo3)
+* [Building a CRUD Web App with a custom form using Laravel jqGrid package](http://www.mariogallegos.com/cms/tutorials/3)
 
 ## Aditional information
 
