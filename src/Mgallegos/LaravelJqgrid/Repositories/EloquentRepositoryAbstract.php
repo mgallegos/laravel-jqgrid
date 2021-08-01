@@ -299,18 +299,9 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 			}
 		})
 		->take($limit)
-		->skip($offset);
-
-        foreach(explode(",", $orderByRaw) as $subOrderByRaw) {
-            $params = preg_split("/\ /i", trim($subOrderByRaw));
-            if (count($params) == 2) {
-                $rows = $rows->orderBy($params[0], $params[1]);
-            } elseif (count($params) == 1) {
-                $rows = $rows->orderBy($params[0]);
-            }
-        }
-
-		$rows = $rows->get($this->visibleColumns);
+		->skip($offset)
+		->orderByRaw($orderByRaw)
+		->get($this->visibleColumns);
 
 		if(!is_array($rows))
 		{

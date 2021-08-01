@@ -130,13 +130,13 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Default Laravel Excel File Properties
+	| Default Spreadsheet File Properties
 	|--------------------------------------------------------------------------
 	|
-	| Default Laravel Excel File Properties that will be set to all grid of your applications,
-	| the key of the array must correspond to a Laravel Excel File Property.
+	| Default Spreadsheet File Properties that will be set to all grid of your applications,
+	| the key of the array must correspond to a Spreadsheet File Property.
 	| These properties can override by setting a different value in a specific grid.
-	| Online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	| Online documentation available at https://phpspreadsheet.readthedocs.io/
 	|
 	*/
 
@@ -144,13 +144,13 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Default Laravel Excel Sheet Properties
+	| Default Spreadsheet Sheet Properties
 	|--------------------------------------------------------------------------
 	|
-	| Default Laravel Excel Sheet Properties that will be set to all grid of your applications,
-	| the key of the array must correspond to a Laravel Excel Sheet Property.
+	| Default Spreadsheet Sheet Properties that will be set to all grid of your applications,
+	| the key of the array must correspond to a Spreadsheet Sheet Property.
 	| These properties can override by setting a different value in a specific grid.
-	| Online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	| Online documentation available at https://phpspreadsheet.readthedocs.io/
 	|
 	*/
 
@@ -197,19 +197,19 @@ return array(
 	*/
 
 	'function_type_properties' => array(
-						'datatype' => array('xml', 'xmlstring', 'json', 'jsonstring', 'local', 'javascript', 'clientSide'),
-						'cellattr' => array(),
-						'formatter' => array('integer', 'number', 'currency', 'date', 'email', 'link', 'showlink', 'checkbox', 'select', 'actions'),
-						'unformat' => array(),
-						'sorttype' => array('int','integer', 'float','number', 'currency', 'date', 'text'),
-						'dataInit' => array(),
-						'fn' => array(),
-						'custom_element' => array(),
-						'custom_value' => array(),
-						'custom_func' => array(),
-						'buildSelect' => array(),
-						'summaryType' => array('sum','count','avg','min','max'),
-						'rowattr' => array(),
-						'converter' => array(),
-					),
+		'datatype' => array('xml', 'xmlstring', 'json', 'jsonstring', 'local', 'javascript', 'clientSide'),
+		'cellattr' => array(),
+		'formatter' => array('integer', 'number', 'currency', 'date', 'email', 'link', 'showlink', 'checkbox', 'select', 'actions'),
+		'unformat' => array(),
+		'sorttype' => array('int','integer', 'float','number', 'currency', 'date', 'text'),
+		'dataInit' => array(),
+		'fn' => array(),
+		'custom_element' => array(),
+		'custom_value' => array(),
+		'custom_func' => array(),
+		'buildSelect' => array(),
+		'summaryType' => array('sum','count','avg','min','max'),
+		'rowattr' => array(),
+		'converter' => array(),
+	),
 );

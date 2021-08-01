@@ -214,14 +214,14 @@ class JqGridRender implements RenderInterface {
 	protected $exportButtonsOptions;
 
 	/**
-	* Laravel Excel File Properties
+	* Spreadsheet File Properties
 	*
 	* @var array
 	*/
 	protected $fileProperties;
 
 	/**
-	* Laravel Excel Sheet Properties
+	* Spreadsheet Sheet Properties
 	*
 	* @var array
 	*/
@@ -284,14 +284,14 @@ class JqGridRender implements RenderInterface {
 	protected $defaultExportButtonsOptions;
 
 	/**
-	* Laravel Excel Default File Properties
+	* Spreadsheet Default File Properties
 	*
 	* @var array
 	*/
 	protected $defaultFileProperties;
 
 	/**
-	* Laravel Excel Default Sheet Properties
+	* Spreadsheet Default Sheet Properties
 	*
 	* @var array
 	*/
@@ -325,78 +325,62 @@ class JqGridRender implements RenderInterface {
 	 *
 	 * @param
 	 */
-	public function __construct(array $optionValidators = array(), array $colModelValidators = array(), array $navigatorValidators = array(), array $filterToolbarValidators = array(), array $defaultGridOptions = array(), array $defaultPivotGridOptions = array(), array $defaultGroupHeaderOptions = array(), array $defaultColModelProperties = array(), array $defaultNavigatorOptions = array(), array $defaultfilterToolbarOptions = array(), array $defaultFilterToolbarButtonsOptions = array(), array $defaultExportButtonsOptions = array(), array $defaultFileProperties = array(), array $defaultSheetProperties = array(), array $functionTypeProperties = array(), array $pivotOptionsNames = array(), array $groupHeaderOptionsNames = array(), $token)
+	public function __construct(
+		array $optionValidators = array(),
+		array $colModelValidators = array(),
+		array $navigatorValidators = array(),
+		array $filterToolbarValidators = array(),
+		array $defaultGridOptions = array(),
+		array $defaultPivotGridOptions = array(),
+		array $defaultGroupHeaderOptions = array(),
+		array $defaultColModelProperties = array(),
+		array $defaultNavigatorOptions = array(),
+		array $defaultfilterToolbarOptions = array(),
+		array $defaultFilterToolbarButtonsOptions = array(),
+		array $defaultExportButtonsOptions = array(),
+		array $defaultFileProperties = array(),
+		array $defaultSheetProperties = array(),
+		array $functionTypeProperties = array(),
+		array $pivotOptionsNames = array(),
+		array $groupHeaderOptionsNames = array(),
+		$token
+	)
 	{
 		$this->gridId = str_random(10);
-
 		$this->jqPivot = false;
-
 		$this->frozenColumn = false;
-
 		$this->colModelValidators = $colModelValidators;
-
 		$this->optionValidators = $optionValidators;
-
 		$this->navigatorValidators = $navigatorValidators;
-
 		$this->filterToolbarValidators = $filterToolbarValidators;
-
 		$this->colModel = array();
-
 		$this->options = $defaultGridOptions;
-
 		$this->pivotOptions = $defaultPivotGridOptions;
-
 		$this->pivotOptionsNames = $pivotOptionsNames;
-
 		$this->groupHeaderOptions = $defaultGroupHeaderOptions;
-
 		$this->groupHeaderOptionsNames = $groupHeaderOptionsNames;
-
 		$this->navigatorOptions = $defaultNavigatorOptions;
-
 		$this->navigatorEditOptions = array();
-
 		$this->navigatorAddOptions = array();
-
 		$this->navigatorDeleteOptions = array();
-
 		$this->navigatorSearchOptions = array();
-
 		$this->navigatorViewOptions = array();
-
 		$this->filterToolbarOptions = $defaultfilterToolbarOptions;
-
 		$this->filterToolbarButtonsOptions = $defaultFilterToolbarButtonsOptions;
-
 		$this->exportButtonsOptions = $defaultExportButtonsOptions;
-
 		$this->fileProperties = $defaultFileProperties;
-
 		$this->sheetProperties = $defaultSheetProperties;
-
 		$this->defaultColModelProperties = $defaultColModelProperties;
-
 		$this->defaultGridOptions = $defaultGridOptions;
-
 		$this->defaultPivotGridOptions = $defaultPivotGridOptions;
-
 		$this->defaultGroupHeaderOptions = $defaultGroupHeaderOptions;
-
 		$this->defaultNavigatorOptions = $defaultNavigatorOptions;
-
 		$this->defaultfilterToolbarOptions = $defaultfilterToolbarOptions;
-
 		$this->defaultFilterToolbarButtonsOptions = $defaultFilterToolbarButtonsOptions;
-
 		$this->defaultExportButtonsOptions = $defaultExportButtonsOptions;
-
 		$this->defaultFileProperties = $defaultFileProperties;
-
 		$this->defaultSheetProperties = $defaultSheetProperties;
-
 		$this->functionTypeProperties = $functionTypeProperties;
-
 		$this->token = $token;
 	}
 
@@ -457,7 +441,6 @@ class JqGridRender implements RenderInterface {
 		array_push($this->colModel, array_merge($this->defaultColModelProperties, $properties));
 
 		return $this;
-
 	}
 
 	/**
@@ -799,10 +782,10 @@ class JqGridRender implements RenderInterface {
 	}
 
 	/**
-	* Set a Laravel Excel file property.
+	* Set a Spreadsheet file property.
 	*
 	* @param  string $option
-	* 	A valid Laravel Excel file property, online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	* 	A valid Spreadsheet file property, online documentation available at https://phpspreadsheet.readthedocs.io/
 	* @param  mixed $option
 	* 	A value of an option can be a string, boolean or array.
 	* @return $this
@@ -884,10 +867,10 @@ class JqGridRender implements RenderInterface {
 	}
 
 	/**
-	* Set a Laravel Excel sheet property.
+	* Set a Spreadsheet sheet property.
 	*
 	* @param  string $option
-	* 	A valid Laravel Excel sheet property, online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	* 	A valid Spreadsheet sheet property, online documentation available at https://phpspreadsheet.readthedocs.io/
 	* @param  mixed $option
 	* 	A value of an option can be a string, boolean or array.
 	* @return $this
@@ -985,24 +968,25 @@ class JqGridRender implements RenderInterface {
 		}
 
 		$html = '';
-		$html .= '<form method="' . $this->options['mtype'] . '" action="'. $this->options['url'] . '" accept-charset="UTF-8" id="'. $this->gridId .'ExportForm">
-								<input name="_token" type="hidden" value="' . $this->token . '">
-								<input id="'. $this->gridId .'Name" name="name" type="hidden" value="'. $fileName .'">
-								<input id="'. $this->gridId .'Model" name="model" type="hidden">
-								<input id="'. $this->gridId .'Sidx" name="sidx" type="hidden">
-								<input id="'. $this->gridId .'Sord" name="sord" type="hidden">
-								<input id="'. $this->gridId .'ExportFormat" name="exportFormat" type="hidden" value="xls">
-								<input id="'. $this->gridId .'Filters" name="filters" type="hidden">
-								<input id="'. $this->gridId .'PivotFlag" name="pivot" type="hidden" value="' . $this->jqPivot . '">
-								<input id="'. $this->gridId .'Rows" name="pivotRows" type="hidden">
-								<input id="'. $this->gridId .'SrcDateFormat" name="srcDateFormat" type="hidden">
-								<input id="'. $this->gridId .'NewDateFormat" name="newDateFormat" type="hidden">
-								<input id="'. $this->gridId .'FotterRow" name="fotterRow" type="hidden">
-								<input name="fileProperties" type="hidden" value=\'' . json_encode($this->fileProperties) . '\'>
-								<input name="sheetProperties" type="hidden" value=\'' . json_encode($this->sheetProperties) . '\'>
-								<input name="groupingView" type="hidden" value=\'' . json_encode($groupingView) . '\'>
-								<input name="groupHeaders" type="hidden" value=\'' . json_encode($groupHeaders) . '\'>
-							</form>';
+		$html .= '
+			<form method="' . $this->options['mtype'] . '" action="'. $this->options['url'] . '" accept-charset="UTF-8" id="'. $this->gridId .'ExportForm">
+				<input name="_token" type="hidden" value="' . $this->token . '">
+				<input id="'. $this->gridId .'Name" name="name" type="hidden" value="'. $fileName .'">
+				<input id="'. $this->gridId .'Model" name="model" type="hidden">
+				<input id="'. $this->gridId .'Sidx" name="sidx" type="hidden">
+				<input id="'. $this->gridId .'Sord" name="sord" type="hidden">
+				<input id="'. $this->gridId .'ExportFormat" name="exportFormat" type="hidden" value="xls">
+				<input id="'. $this->gridId .'Filters" name="filters" type="hidden">
+				<input id="'. $this->gridId .'PivotFlag" name="pivot" type="hidden" value="' . $this->jqPivot . '">
+				<input id="'. $this->gridId .'Rows" name="pivotRows" type="hidden">
+				<input id="'. $this->gridId .'SrcDateFormat" name="srcDateFormat" type="hidden">
+				<input id="'. $this->gridId .'NewDateFormat" name="newDateFormat" type="hidden">
+				<input id="'. $this->gridId .'FotterRow" name="fotterRow" type="hidden">
+				<input name="fileProperties" type="hidden" value=\'' . json_encode($this->fileProperties) . '\'>
+				<input name="sheetProperties" type="hidden" value=\'' . json_encode($this->sheetProperties) . '\'>
+				<input name="groupingView" type="hidden" value=\'' . json_encode($groupingView) . '\'>
+				<input name="groupHeaders" type="hidden" value=\'' . json_encode($groupHeaders) . '\'>
+			</form>';
 
 		if($createTableElement)
 		{
@@ -1113,39 +1097,22 @@ class JqGridRender implements RenderInterface {
 	protected function reset()
 	{
 		$this->gridId = str_random(10);
-
 		$this->jqPivot = false;
-
 		$this->frozenColumn = false;
-
 		$this->options = $this->defaultGridOptions;
-
 		$this->pivotOptions = $this->defaultPivotGridOptions;
-
 		$this->groupHeaderOptions = $this->defaultGroupHeaderOptions;
-
 		$this->colModel = array();
-
 		$this->navigatorOptions = $this->defaultNavigatorOptions;
-
 		$this->navigatorEditOptions = array();
-
 		$this->navigatorAddOptions = array();
-
 		$this->navigatorDeleteOptions = array();
-
 		$this->navigatorSearchOptions = array();
-
 		$this->navigatorViewOptions = array();
-
 		$this->filterToolbarOptions = $this->defaultfilterToolbarOptions;
-
 		$this->filterToolbarButtonsOptions = $this->defaultFilterToolbarButtonsOptions;
-
 		$this->exportButtonsOptions = $this->defaultExportButtonsOptions;
-
 		$this->fileProperties = $this->defaultFileProperties;
-
 		$this->sheetProperties = 	$this->defaultSheetProperties;
 	}
 
@@ -1164,10 +1131,10 @@ class JqGridRender implements RenderInterface {
 		{
 			if (in_array($key, array_keys($this->functionTypeProperties)))
 			{
-					if (!in_array($value, $this->functionTypeProperties[$key]))
-					{
-						$value = '###' . $value . '###';
-					}
+				if (!in_array($value, $this->functionTypeProperties[$key]))
+				{
+					$value = '###' . $value . '###';
+				}
 			}
 			else
 			{
@@ -1259,7 +1226,6 @@ class JqGridRender implements RenderInterface {
 			';
 		}
 
-
 		if(isset($this->exportButtonsOptions['srcDateFormat']))
 		{
 			$code .= ' jQuery("#' . $this->gridId . 'SrcDateFormat").val("' . $this->exportButtonsOptions['srcDateFormat'] . '");';
@@ -1309,6 +1275,5 @@ class JqGridRender implements RenderInterface {
 		$this->exportButtonsOptions = array_merge($this->exportButtonsOptions, $properties);
 
 		return $this;
-
 	}
 }

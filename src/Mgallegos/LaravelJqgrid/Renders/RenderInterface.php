@@ -169,7 +169,7 @@ interface RenderInterface {
 	* Set a Laravel Excel file property.
 	*
 	* @param  string $option
-	* 	A valid Laravel Excel file property, online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	* 	A valid Laravel Excel file property, online documentation available at https://phpspreadsheet.readthedocs.io/
 	* @param  mixed $option
 	* 	A value of an option can be a string, boolean or array.
 	* @return $this
@@ -181,7 +181,7 @@ interface RenderInterface {
 	* Set a Laravel Excel sheet property.
 	*
 	* @param  string $option
-	* 	A valid Laravel Excel sheet property, online documentation available at http://www.maatwebsite.nl/laravel-excel/docs/reference-guide
+	* 	A valid Laravel Excel sheet property, online documentation available at https://phpspreadsheet.readthedocs.io/
 	* @param  mixed $option
 	* 	A value of an option can be a string, boolean or array.
 	* @return $this

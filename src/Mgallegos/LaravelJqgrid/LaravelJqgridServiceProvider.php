@@ -34,7 +34,8 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 		{
 			$this->package('mgallegos/laravel-jqgrid');
 		}
-		elseif ($this->isLaravelVersion('5'))
+		// elseif ($this->isLaravelVersion('5'))
+		else
 		{
 			$this->publishes([
           __DIR__ . '/../../config/config.php' => config_path('laravel-jqgrid.php'),
@@ -54,9 +55,7 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 	public function register()
 	{
 		$this->app->register('Maatwebsite\Excel\ExcelServiceProvider');
-
 		$this->registerRender();
-
 		$this->registerEncoder();
 	}
 
@@ -71,32 +70,34 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 		{
 			$prefix = 'laravel-jqgrid::';
 		}
-		elseif ($this->isLaravelVersion('5'))
+		// elseif ($this->isLaravelVersion('5'))
+		else
 		{
 			$prefix = 'laravel-jqgrid.';
 		}
 
 		$this->app->bind('gridrender', function($app) use ($prefix)
 		{
-			return new Renders\JqGridRender(	array(),
-												array(new NameValidation()),
-												array(),
-												array(),
-												$app['config']->get($prefix . 'default_grid_options'),
-												$app['config']->get($prefix . 'default_pivot_grid_options'),
-												$app['config']->get($prefix . 'default_group_header_options'),
-												$app['config']->get($prefix . 'default_col_model_properties'),
-												$app['config']->get($prefix . 'default_navigator_options'),
-												$app['config']->get($prefix . 'default_filter_toolbar_options'),
-												$app['config']->get($prefix . 'default_filter_toolbar_buttons_options'),
-												$app['config']->get($prefix . 'default_export_buttons_options'),
-												$app['config']->get($prefix . 'default_file_properties'),
-												$app['config']->get($prefix . 'default_sheet_properties'),
-												$app['config']->get($prefix . 'function_type_properties'),
-												$app['config']->get($prefix . 'pivot_options'),
-												$app['config']->get($prefix . 'group_header_options'),
-												$app['session']->token()
-											);
+			return new Renders\JqGridRender(
+				array(),
+				array(new NameValidation()),
+				array(),
+				array(),
+				$app['config']->get($prefix . 'default_grid_options'),
+				$app['config']->get($prefix . 'default_pivot_grid_options'),
+				$app['config']->get($prefix . 'default_group_header_options'),
+				$app['config']->get($prefix . 'default_col_model_properties'),
+				$app['config']->get($prefix . 'default_navigator_options'),
+				$app['config']->get($prefix . 'default_filter_toolbar_options'),
+				$app['config']->get($prefix . 'default_filter_toolbar_buttons_options'),
+				$app['config']->get($prefix . 'default_export_buttons_options'),
+				$app['config']->get($prefix . 'default_file_properties'),
+				$app['config']->get($prefix . 'default_sheet_properties'),
+				$app['config']->get($prefix . 'function_type_properties'),
+				$app['config']->get($prefix . 'pivot_options'),
+				$app['config']->get($prefix . 'group_header_options'),
+				$app['session']->token()
+			);
 		});
 	}
 
@@ -109,7 +110,7 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 	{
 		$this->app->bind('Mgallegos\LaravelJqgrid\Encoders\RequestedDataInterface', function($app)
 		{
-			return new Encoders\JqGridJsonEncoder($app->make('excel'));
+			return new Encoders\JqGridJsonEncoder();
 		});
 	}
 

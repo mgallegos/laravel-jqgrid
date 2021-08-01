@@ -15,25 +15,49 @@ use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingSyntaxErrorException;
 use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingUnexpectedControlCharException;
 use Mgallegos\LaravelJqgrid\Exceptions\JsonEncodingUnknownException;
 use Mgallegos\LaravelJqgrid\Repositories\RepositoryInterface;
-use Maatwebsite\Excel\Excel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
 use Exception;
 
 class JqGridJsonEncoder implements RequestedDataInterface {
 
 	/**
-	* Maatwebsite\Excel\Excel
-	* @var Excel
+	* PhpSpreadsheet Style Array
+	*
+	* @var array
 	*/
-	protected $Excel;
+	protected $styleBold;
+
+	/**
+	* PhpSpreadsheet Style Array
+	*
+	* @var array
+	*/
+	protected $styleAlignmentLeft;
+
+	/**
+	* PhpSpreadsheet Style Array
+	*
+	* @var array
+	*/
+	protected $styleAlignmentRight;
+
+	/**
+	* PhpSpreadsheet Style Array
+	*
+	* @var array
+	*/
+	protected $styleAlignmentCenter;
+
 
 	/**
 	* Construct Excel
-	* @param  Maatwebsite\Excel\Excel $Excel
 	*/
-	public function __construct(Excel $Excel)
+	public function __construct()
 	{
-			$this->Excel = $Excel;
 	}
 
 	/**
@@ -251,7 +275,7 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 
 			if($encodeRowsToUtf8)
 			{
-				$rows = self::utf8ize($rows);
+				$rows = $this->utf8ize($rows);
 			}
 
 			if($count < count($rows))
@@ -282,437 +306,553 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 		      )
 			 	);
 			}
+			
+			$this->setSpreadsheetStyles();
 
-			$this->Excel->create($postedData['name'], function($Excel) use ($rows, $postedData)
+			$StreamedResponse = new StreamedResponse();
+    	$StreamedResponse->setCallback(function () use (&$rows, $postedData)
 			{
-				foreach (json_decode($postedData['fileProperties'], true) as $key => $value)
-				{
-					$method = 'set' . ucfirst($key);
 
-					$Excel->$method($value);
+			// 	foreach (json_decode($postedData['fileProperties'], true) as $key => $value)
+			// 	{
+			// 		$method = 'set' . ucfirst($key);
+
+			// 		$Excel->$method($value);
+			// 	}
+
+				$groupingView = json_decode($postedData['groupingView'], true);
+				$groupHeaders = json_decode($postedData['groupHeaders'], true);
+				$columnsPositions = $summaryTypes = $modelLabels = $modelSelectFormattersValues = $modelNumberFormatters = $modelDateFormatters = $numericColumns = $textColumns = array();
+				$groupFieldName = '';
+				$columnCounter = 0;
+				$Spreadsheet = new Spreadsheet();
+				$Worksheet = $Spreadsheet->getActiveSheet();
+
+				foreach (json_decode($postedData['model'], true) as $a => $model)
+				{
+					$styles = array();
+					$formatCode = '';
+					$isVisible = false;
+
+					if(!empty($groupingView) && $groupingView['groupField'][0] == $model['name'])
+					{
+						if(isset($model['hidden']) && $model['hidden'] === true)
+						{
+							$groupFieldHidden = true;
+						}
+						else
+						{
+							$groupFieldHidden = false;
+						}
+
+						$groupFieldName = $model['name'];
+
+						if(isset($model['label']))
+						{
+							$groupFieldLabel = $model['label'];
+						}
+						else
+						{
+							$groupFieldLabel = $model['name'];
+						}
+					}
+
+					if(isset($model['hidden']) && $model['hidden'] !== true)
+					{
+						$columnCounter++;
+
+						$isVisible = true;
+						$columnsPositions[$model['name']] = $columnCounter;
+					}
+
+					if(isset($model['hidedlg']) && $model['hidedlg'] === true)
+					{
+						continue;
+					}
+
+					if(isset($model['summaryType']))
+					{
+						$summaryTypes[isset($model['label']) ? $model['label'] : $model['name']] = $model['summaryType'];
+					}
+
+					if($model['hidden'] === false || $model['name'] == $groupFieldName)
+					{
+						if(isset($model['label']))
+						{
+							$modelLabels[$model['name']] = $model['label'];
+						}
+						else
+						{
+							$modelLabels[$model['name']] = $model['name'];
+						}
+					}
+
+					if(isset($model['formatter']))
+					{
+						switch ($model['formatter'])
+						{
+							case 'select':
+								if(isset($model['editoptions']['value']))
+								{
+									foreach (explode(';', $model['editoptions']['value']) as $index => $value)
+									{
+										$temp = explode(':', $value);
+
+										$modelSelectFormattersValues[isset($model['label']) ? $model['label'] : $model['name']][$temp[0]] = $temp[1];
+									}
+								}
+
+								break;
+							case 'integer':
+								$formatCode = '0';
+								// $modelNumberFormatters[$model['name']] = '0';
+
+								array_push($numericColumns, isset($model['label']) ? $model['label'] : $model['name']);
+
+								break;
+							case 'number':
+							case 'currency':
+								if(isset($model['formatoptions']['prefix']))
+								{
+									// $prefix = $model['formatoptions']['prefix'];
+
+									$formatCode = '"' . $model['formatoptions']['prefix'] . '"#,##0.00';
+								}
+								else
+								{
+									// $prefix = '';
+									$formatCode = '#,##0.00';
+								}
+
+								// $formatCode = '"' . $prefix . '"#,##0.00';
+								// $modelNumberFormatters[$model['name']] = '"' . $prefix . '"#,##0.00';
+
+								array_push($numericColumns, isset($model['label']) ? $model['label'] : $model['name']);
+
+								break;
+							case 'date':
+								if((isset($model['formatoptions']['srcformat']) || $postedData['srcDateFormat']) && (isset($model['formatoptions']['newformat']) || $postedData['newDateFormat']))
+								{
+									if(isset($model['formatoptions']['srcformat']))
+									{
+										$srcformat = $model['formatoptions']['srcformat'];
+									}
+									else
+									{
+										$srcformat = $postedData['srcDateFormat'];
+									}
+
+									if(isset($model['formatoptions']['newformat']))
+									{
+										$newformat = $model['formatoptions']['newformat'];
+									}
+									else
+									{
+										$newformat = $postedData['newDateFormat'];
+									}
+
+									// $modelDateFormatters[$model['name']] = array('srcformat' => $srcformat, 'newformat' => $newformat);
+									$modelDateFormatters[isset($model['label']) ? $model['label'] : $model['name']] = array('srcformat' => $srcformat, 'newformat' => $newformat);
+								}
+
+								break;
+						}
+					}
+
+					if (isset($model['align']) && isset($model['hidden']) && $model['hidden'] !== true)
+					{
+						switch ($model['align']) {
+							case 'left':
+								$styles = array_merge($styles, $this->styleAlignmentLeft);
+								break;
+							case 'right':
+								$styles = array_merge($styles, $this->styleAlignmentRight);
+								break;
+							case 'center':
+								$styles = array_merge($styles, $this->styleAlignmentCenter);
+								break;
+							default:
+								# code...
+								break;
+						}
+					}
+
+					if($isVisible)
+					{
+						$letter = $this->numToLetter($columnCounter, true);
+
+						if(!empty($styles))
+						{
+							$Worksheet->getStyle($letter . ':' . $letter)->applyFromArray($styles);
+						}
+
+						if(!empty($formatCode))
+						{	
+							$Worksheet->getStyle($letter . ':' . $letter)
+								->getNumberFormat()
+								->applyFromArray(
+								[
+									'formatCode' => $formatCode
+								]
+							);	
+						}
+						else
+						{
+							$Worksheet->getStyle($letter . ':' . $letter)
+								->getNumberFormat()
+								->setFormatCode( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT );
+
+							array_push($textColumns, isset($model['label']) ? $model['label'] : $model['name']);
+						}
+
+
+						if(!empty($model['width']))
+						{
+							// $Worksheet->getColumnDimension($letter)->setAutoSize(true);
+							// $Worksheet->getColumnDimension($letter)->setWidth($model['width'], 'px');
+						}
+					}
 				}
 
-				$Excel->sheet($postedData['name'], function($Sheet) use ($rows, $postedData)
+				if(empty($postedData['pivot']))
 				{
-					$groupingView = json_decode($postedData['groupingView'], true);
-
-					$groupHeaders = json_decode($postedData['groupHeaders'], true);
-
-					$columnsPositions = $summaryTypes = $modelLabels = $modelSelectFormattersValues = $modelNumberFormatters = $modelDateFormatters = $numericColumns = array();
-
-					$groupFieldName = '';
-
-					$columnCounter = 0;
-
-					foreach (json_decode($postedData['model'], true) as $a => $model)
+					foreach ($rows as $index => &$row)
 					{
-						if(!empty($groupingView) && $groupingView['groupField'][0] == $model['name'])
+						$currentRow = array();
+
+						foreach ($modelLabels as $columnName => $value)
 						{
-							if(isset($model['hidden']) && $model['hidden'] === true)
-							{
-								$groupFieldHidden = true;
-							}
-							else
-							{
-								$groupFieldHidden = false;
-							}
+							$currentRow[$value] = isset($row[$columnName]) ? $row[$columnName] : '';
+						}
 
-							$groupFieldName = $model['name'];
-
-							if(isset($model['label']))
+						foreach ($modelSelectFormattersValues as $label => $modelSelectFormatterValue)
+						{
+							if(isset($currentRow[$label]))
 							{
-								$groupFieldLabel = $model['label'];
-							}
-							else
-							{
-								$groupFieldLabel = $model['name'];
+								$currentRow[$label] = isset($modelSelectFormatterValue[$currentRow[$label]])?$modelSelectFormatterValue[$currentRow[$label]]:$currentRow[$label];
 							}
 						}
 
-						if(isset($model['hidden']) && $model['hidden'] !== true)
+						foreach ($modelDateFormatters as $label => $modelDateFormatter)
 						{
-							$columnCounter++;
-
-							$columnsPositions[$model['name']] = $columnCounter;
-						}
-
-						if(isset($model['hidedlg']) && $model['hidedlg'] === true)
-						{
-							continue;
-						}
-
-						if(isset($model['summaryType']))
-						{
-							$summaryTypes[isset($model['label'])?$model['label']:$model['name']] = $model['summaryType'];
-						}
-
-						if($model['hidden'] === false || $model['name'] == $groupFieldName)
-						{
-							if(isset($model['label']))
+							if(isset($currentRow[$label]) && !empty($currentRow[$label]))
 							{
-								$modelLabels[$model['name']] = $model['label'];
-							}
-							else
-							{
-								$modelLabels[$model['name']] = $model['name'];
+								$currentRow[$label] = Carbon::createFromFormat($modelDateFormatter['srcformat'], $currentRow[$label])->format($modelDateFormatter['newformat']);
 							}
 						}
 
-						if(isset($model['formatter']))
+						foreach ($numericColumns as $index => $label)
 						{
-							switch ($model['formatter'])
+							if(isset($currentRow[$label]))
 							{
-								case 'select':
-									if(isset($model['editoptions']['value']))
-									{
-										foreach (explode(';', $model['editoptions']['value']) as $index => $value)
-										{
-											$temp = explode(':', $value);
-
-											$modelSelectFormattersValues[isset($model['label'])?$model['label']:$model['name']][$temp[0]] = $temp[1];
-										}
-									}
-
-									break;
-								case 'integer':
-									$modelNumberFormatters[$model['name']] = '0';
-
-									array_push($numericColumns, isset($model['label'])?$model['label']:$model['name']);
-
-									break;
-								case 'number':
-								case 'currency':
-									if(isset($model['formatoptions']['prefix']))
-									{
-										$prefix = $model['formatoptions']['prefix'];
-									}
-									else
-									{
-										$prefix = '';
-									}
-
-									$modelNumberFormatters[$model['name']] = '"' . $prefix . '"#,##0.00';
-
-									array_push($numericColumns, isset($model['label'])?$model['label']:$model['name']);
-
-									break;
-								case 'date':
-									if((isset($model['formatoptions']['srcformat']) || $postedData['srcDateFormat']) && (isset($model['formatoptions']['newformat']) || $postedData['newDateFormat']))
-									{
-										if(isset($model['formatoptions']['srcformat']))
-										{
-											$srcformat = $model['formatoptions']['srcformat'];
-										}
-										else
-										{
-											$srcformat = $postedData['srcDateFormat'];
-										}
-
-										if(isset($model['formatoptions']['newformat']))
-										{
-											$newformat = $model['formatoptions']['newformat'];
-										}
-										else
-										{
-											$newformat = $postedData['newDateFormat'];
-										}
-
-										// $modelDateFormatters[$model['name']] = array('srcformat' => $srcformat, 'newformat' => $newformat);
-										$modelDateFormatters[isset($model['label'])?$model['label']:$model['name']] = array('srcformat' => $srcformat, 'newformat' => $newformat);
-									}
-
-									break;
+								$currentRow[$label] = (float) $currentRow[$label];
 							}
 						}
 
-						if(isset($model['align']) && isset($model['hidden']) && $model['hidden'] !== true)
-						{
-							$Sheet->getStyle($this->numToLetter($columnCounter, true))->getAlignment()->applyFromArray(
-									array('horizontal' => $model['align'])
-							);
-						}
+						$row = $currentRow;
 					}
+				}
 
-					if(empty($postedData['pivot']))
+				// foreach (json_decode($postedData['sheetProperties'], true) as $key => $value)
+				// {
+				// 	$method = 'set' . ucfirst($key);
+
+				// 	$Sheet->$method($value);
+				// }
+
+				$subTotalGroupedRowsNumber = array();
+
+				if(!empty($groupingView))
+				{
+					$groupedRows = $groupedRowsNumbers = $subTotalGroupedRow = $currentSubTotalGroupedRow = array();
+
+					$rowCounter = 0;
+
+					foreach ($rows as $index => &$row)
 					{
-						foreach ($rows as $index => &$row)
+						if($rowCounter == 0)
 						{
-							$currentRow = array();
+							$currentgroupFieldValue = $row[$groupFieldLabel];
 
-							foreach ($modelLabels as $columnName => $value)
+							if($groupFieldHidden)
 							{
-								$currentRow[$value] = isset($row[$columnName])?$row[$columnName]:'';
+								unset($row[$groupFieldLabel]);
 							}
 
-							foreach ($modelSelectFormattersValues as $label => $modelSelectFormatterValue)
+							$firstColumnName = key($row);
+
+							$groupedRow = $row;
+
+							foreach ($groupedRow as $label => &$cell)
 							{
-								if(isset($currentRow[$label]))
+								if($firstColumnName == $label)
 								{
-									$currentRow[$label] = isset($modelSelectFormatterValue[$currentRow[$label]])?$modelSelectFormatterValue[$currentRow[$label]]:$currentRow[$label];
+									$cell = $currentgroupFieldValue;
 								}
-							}
-
-							foreach ($modelDateFormatters as $label => $modelDateFormatter)
-							{
-								if(isset($currentRow[$label]) && !empty($currentRow[$label]))
+								else
 								{
-									$currentRow[$label] = Carbon::createFromFormat($modelDateFormatter['srcformat'], $currentRow[$label])->format($modelDateFormatter['newformat']);
+									$cell = '';
 								}
+
+								$subTotalGroupedRow[$label] = '';
 							}
 
-							foreach ($numericColumns as $index => $label)
+							$currentSubTotalGroupedRow = $subTotalGroupedRow;
+
+							$rowCounter = 2;
+
+							if(!empty($groupHeaders))
 							{
-								if(isset($currentRow[$label]))
-								{
-									$currentRow[$label] = (float) $currentRow[$label];
-								}
+								$rowCounter++;
 							}
 
-							$row = $currentRow;
+							array_push($groupedRows, $groupedRow);
+							array_push($groupedRowsNumbers, $rowCounter);
 						}
-					}
-
-					foreach (json_decode($postedData['sheetProperties'], true) as $key => $value)
-					{
-						$method = 'set' . ucfirst($key);
-
-						$Sheet->$method($value);
-					}
-
-					$subTotalGroupedRowsNumber = array();
-
-					if(!empty($groupingView))
-					{
-						$groupedRows = $groupedRowsNumbers = $subTotalGroupedRow = $currentSubTotalGroupedRow = array();
-
-						$rowCounter = 0;
-
-						foreach ($rows as $index => &$row)
+						else
 						{
-							if($rowCounter == 0)
+							if($row[$groupFieldLabel] != $currentgroupFieldValue)
 							{
-								$currentgroupFieldValue = $row[$groupFieldLabel];
+								$currentgroupFieldValue = $groupedRow[$firstColumnName]  = $row[$groupFieldLabel];
 
-								if($groupFieldHidden)
+								$rowCounter++;
+
+								if(!empty($summaryTypes))
 								{
-									unset($row[$groupFieldLabel]);
-								}
-
-								$firstColumnName = key($row);
-
-								$groupedRow = $row;
-
-								foreach ($groupedRow as $label => &$cell)
-								{
-									if($firstColumnName == $label)
+									foreach ($summaryTypes as $column => $summaryType)
 									{
-										$cell = $currentgroupFieldValue;
-									}
-									else
-									{
-										$cell = '';
+										switch ($summaryType) {
+											case 'count':
+												$currentSubTotalGroupedRow[$column] = "($currentSubTotalGroupedRow[$column]) total";
+												break;
+										}
 									}
 
-									$subTotalGroupedRow[$label] = '';
-								}
+									array_push($groupedRows, $currentSubTotalGroupedRow);
+									array_push($subTotalGroupedRowsNumber, $rowCounter);
 
-								$currentSubTotalGroupedRow = $subTotalGroupedRow;
+									$currentSubTotalGroupedRow = $subTotalGroupedRow;
 
-								$rowCounter = 2;
-
-								if(!empty($groupHeaders))
-								{
 									$rowCounter++;
 								}
 
 								array_push($groupedRows, $groupedRow);
 								array_push($groupedRowsNumbers, $rowCounter);
 							}
-							else
+
+							if($groupFieldHidden)
 							{
-								if($row[$groupFieldLabel] != $currentgroupFieldValue)
-								{
-									$currentgroupFieldValue = $groupedRow[$firstColumnName]  = $row[$groupFieldLabel];
-
-									$rowCounter++;
-
-									if(!empty($summaryTypes))
-									{
-										foreach ($summaryTypes as $column => $summaryType)
-										{
-											switch ($summaryType) {
-												case 'count':
-													$currentSubTotalGroupedRow[$column] = "($currentSubTotalGroupedRow[$column]) total";
-													break;
-											}
-										}
-
-										array_push($groupedRows, $currentSubTotalGroupedRow);
-										array_push($subTotalGroupedRowsNumber, $rowCounter);
-
-										$currentSubTotalGroupedRow = $subTotalGroupedRow;
-
-										$rowCounter++;
-									}
-
-									array_push($groupedRows, $groupedRow);
-									array_push($groupedRowsNumbers, $rowCounter);
-								}
-
-								if($groupFieldHidden)
-								{
-									unset($row[$groupFieldLabel]);
-								}
+								unset($row[$groupFieldLabel]);
 							}
-
-							if(!empty($summaryTypes))
-							{
-								foreach ($summaryTypes as $label => $summaryType)
-								{
-									switch ($summaryType) {
-										case 'sum':
-											if(empty($currentSubTotalGroupedRow[$label]))
-											{
-												$currentSubTotalGroupedRow[$label] = $row[$label] + 0;
-											}
-											else
-											{
-												$currentSubTotalGroupedRow[$label] += $row[$label];
-											}
-
-											break;
-										case 'count':
-											if($currentSubTotalGroupedRow[$label] != 0 && empty($currentSubTotalGroupedRow[$label]))
-											{
-												$currentSubTotalGroupedRow[$label] = 0;
-											}
-											else
-											{
-												$currentSubTotalGroupedRow[$label] ++;
-											}
-
-											break;
-									}
-								}
-							}
-
-							array_push($groupedRows, $row);
-
-							$rowCounter++;
 						}
 
 						if(!empty($summaryTypes))
 						{
-							foreach ($summaryTypes as $column => $summaryType)
+							foreach ($summaryTypes as $label => $summaryType)
 							{
 								switch ($summaryType) {
+									case 'sum':
+										if(empty($currentSubTotalGroupedRow[$label]))
+										{
+											$currentSubTotalGroupedRow[$label] = $row[$label] + 0;
+										}
+										else
+										{
+											$currentSubTotalGroupedRow[$label] += $row[$label];
+										}
+
+										break;
 									case 'count':
-										$currentSubTotalGroupedRow[$column] = "($currentSubTotalGroupedRow[$column]) total";
+										if($currentSubTotalGroupedRow[$label] != 0 && empty($currentSubTotalGroupedRow[$label]))
+										{
+											$currentSubTotalGroupedRow[$label] = 0;
+										}
+										else
+										{
+											$currentSubTotalGroupedRow[$label] ++;
+										}
+
 										break;
 								}
 							}
-
-							array_push($groupedRows, $currentSubTotalGroupedRow);
-							array_push($subTotalGroupedRowsNumber, ++$rowCounter);
 						}
 
-						$lastCellLetter = $this->numToLetter($columnCounter, true);
+						array_push($groupedRows, $row);
 
-						foreach ($groupedRowsNumbers as $index => $groupedRowsNumber)
+						$rowCounter++;
+					}
+
+					if(!empty($summaryTypes))
+					{
+						foreach ($summaryTypes as $column => $summaryType)
 						{
-							$Sheet->mergeCells("A$groupedRowsNumber:$lastCellLetter$groupedRowsNumber");
+							switch ($summaryType) {
+								case 'count':
+									$currentSubTotalGroupedRow[$column] = "($currentSubTotalGroupedRow[$column]) total";
+									break;
+							}
 						}
 
-						$rows = $groupedRows;
+						array_push($groupedRows, $currentSubTotalGroupedRow);
+						array_push($subTotalGroupedRowsNumber, ++$rowCounter);
 					}
 
-					$columnFormats = array();
+					$lastCellLetter = $this->numToLetter($columnCounter, true);
 
-					foreach ($modelNumberFormatters as $columnName => $format)
+					foreach ($groupedRowsNumbers as $index => $groupedRowsNumber)
 					{
-						if(isset($columnsPositions[$columnName]))
-						{
-							$columnFormats[$this->numToLetter($columnsPositions[$columnName], true)] = $format;
-						}
+						$Worksheet->mergeCells("A$groupedRowsNumber:$lastCellLetter$groupedRowsNumber");
 					}
 
-					$Sheet->setColumnFormat($columnFormats);
+					$rows = $groupedRows;
+				}
 
-					// var_dump($rows);die();
-					$footerRow = json_decode($postedData['fotterRow'], true);
+				// $columnFormats = array();
 
-					if(!empty($footerRow))
+				// foreach ($modelNumberFormatters as $columnName => $format)
+				// {
+				// 	if(isset($columnsPositions[$columnName]))
+				// 	{
+				// 		$columnFormats[$this->numToLetter($columnsPositions[$columnName], true)] = $format;
+				// 	}
+				// }
+
+				// $Sheet->setColumnFormat($columnFormats);
+
+				$footerRow = json_decode($postedData['fotterRow'], true);
+
+				if(!empty($footerRow))
+				{
+					array_push($rows, $footerRow);
+				}
+
+				$headers = $firstHeader = array();
+
+				if(!empty($groupHeaders))
+				{
+					foreach ($groupHeaders as $index => $groupHeader)
 					{
-						array_push($rows, $footerRow);
+						$firstHeader[$columnsPositions[$groupHeader['startColumnName']] - 1] = $groupHeader['titleText'];
+
+						$Worksheet->mergeCells(
+							$this->numToLetter(
+								$columnsPositions[$groupHeader['startColumnName']], 
+								true
+							) . 
+							'1:' . 
+							$this->numToLetter(
+								// $columnsPositions[$groupHeader['startColumnName']] + $groupHeader['numberOfColumns'] - 1, 
+								$columnsPositions[$groupHeader['startColumnName']] + $groupHeader['numberOfColumns'], 
+								true
+							) . 
+							'1'
+						);
 					}
 
-					$headers = $firstHeader = array();
+					array_push($headers, $firstHeader);
+					array_push($headers, array_keys($rows[0]));
 
-					if(empty($groupHeaders))
+					$Worksheet->fromArray($headers, null, 'A1');
+					$Worksheet->getStyle('A1:' . $this->numToLetter($columnCounter, true) . '1')
+						->applyFromArray($this->styleBold);
+					$Worksheet->getStyle('A1:' . $this->numToLetter($columnCounter, true) . '1')
+						->getAlignment()
+						->setWrapText(true);
+					$Worksheet->getStyle('A2:' . $this->numToLetter($columnCounter, true) . '2')
+						->applyFromArray($this->styleBold);
+					
+					$counterRow = 3;
+				}
+				else
+				{
+					array_push($headers, array_keys($rows[0]));
+
+					$Worksheet->fromArray($headers, null, 'A1');
+
+					$Worksheet->getStyle('A1:' . $this->numToLetter($columnCounter, true) . '1')
+						->applyFromArray($this->styleBold);
+					$Worksheet->getStyle('A1:' . $this->numToLetter($columnCounter, true) . '1')
+						->getAlignment()
+						->setWrapText(true);
+					
+					$counterRow = 2;
+				}
+
+				$columns = array_keys($rows[0]);
+
+				foreach ($rows as $key => $row)
+				{
+					$counterColumn = 'A';
+	
+					foreach ($columns as $column)
 					{
-						$Sheet->fromArray($rows, null, 'A1', true, true);
-					}
-					else
-					{
-						for ($i = 0; $i < count($columnsPositions); $i++)
+						if(in_array($column, $textColumns))
 						{
-							$firstHeader[$i] = '';
-						}
-
-						foreach ($groupHeaders as $index => $groupHeader)
-						{
-							$firstHeader[$columnsPositions[$groupHeader['startColumnName']] - 1] = $groupHeader['titleText'];
-
-							$Sheet->mergeCells($this->numToLetter($columnsPositions[$groupHeader['startColumnName']], true) . '1:' . $this->numToLetter($columnsPositions[$groupHeader['startColumnName']] + $groupHeader['numberOfColumns'] - 1, true) . '1');
-						}
-
-						array_push($headers, $firstHeader);
-						array_push($headers, array_keys($rows[0]));
-
-						$Sheet->fromArray(array_merge($headers, $rows), null, 'A1', true, false);
-
-						$Sheet->row(2, function($Row)
-						{
-						  $Row->setFontWeight('bold');
-						});
-					}
-
-					$Sheet->row(1, function($Row)
-					{
-					  $Row->setFontWeight('bold');
-					});
-
-					foreach ($subTotalGroupedRowsNumber as $index => $number)
-					{
-						$Sheet->row($number, function($Row)
-						{
-						  $Row->setFontWeight('bold');
-						});
-					}
-
-					if(!empty($footerRow))
-					{
-						if(!empty($headers))
-						{
-							$footerRowNumber = count($rows) + count($headers);
+							$Worksheet->setCellValueExplicit(
+								"$counterColumn$counterRow", $row[$column],
+								\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
+							);
 						}
 						else
 						{
-							$footerRowNumber = count($rows) + 1;
+							$Worksheet->setCellValue("$counterColumn$counterRow", $row[$column]);
 						}
 
-						$Sheet->row($footerRowNumber, function($Row)
-						{
-							$Row->setFontWeight('bold');
-						});
+						$counterColumn++;
 					}
 
-				});
-			})->export($postedData['exportFormat']);
+					$counterRow++;
+				}
+
+				foreach ($subTotalGroupedRowsNumber as $index => $number)
+				{
+					$Worksheet->getStyle('A' . $number . ':' . $this->numToLetter($columnCounter, true) . $number)
+						->applyFromArray($this->styleBold);
+				}
+
+				if(!empty($footerRow))
+				{
+					if(!empty($headers))
+					{
+						$footerRowNumber = count($rows) + count($headers);
+					}
+					else
+					{
+						$footerRowNumber = count($rows) + 1;
+					}
+
+					$Worksheet->getStyle('A' . $footerRowNumber . ':' . $this->numToLetter($columnCounter, true) . $footerRowNumber)
+						->applyFromArray($this->styleBold);
+
+					// $Worksheet->row($footerRowNumber, function($Row)
+					// {
+					// 	$Row->setFontWeight('bold');
+					// });
+				}
+
+				$Writer =  new Xlsx($Spreadsheet);
+				$Writer->save('php://output');
+			});
+
+			// dd($rows);
+
+			$contentDisposition = 'attachment; filename=' . $postedData['name'] . '.xlsx';
+			$StreamedResponse->setStatusCode(Response::HTTP_OK);
+			$StreamedResponse->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$StreamedResponse->headers->set('Content-Disposition', $contentDisposition);
+
+			return $StreamedResponse->send();
 		}
 		else
 		{
-				echo $this->safe_json_encode(array('page' => $page, 'total' => $totalPages, 'records' => $count, 'rows' => $rows));
+			echo $this->safe_json_encode(
+				array(
+					'page' => $page, 
+					'total' => $totalPages, 
+					'records' => $count, 
+					'rows' => $rows
+				)
+			);
 		}
 	}
 
@@ -724,13 +864,20 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 	* @param	bool	upper case the letter on return?
 	* @return	string	letters from number input
 	*/
-	protected function numToLetter($num, $uppercase = FALSE)
+	protected function numToLetter($c, $uppercase = FALSE)
 	{
-		$num -= 1;
+		$c = intval($c);
+    if ($c <= 0) return '';
 
-		$letter = 	chr(($num % 26) + 97);
-		$letter .= 	(floor($num/26) > 0) ? str_repeat($letter, floor($num/26)) : '';
-		return 		($uppercase ? strtoupper($letter) : $letter);
+    $letter = '';
+             
+    while($c != 0){
+       $p = ($c - 1) % 26;
+       $c = intval(($c - $p) / 26);
+       $letter = chr(65 + $p) . $letter;
+    }
+    
+    return ($uppercase ? strtoupper($letter) : $letter);
 	}
 
     /**
@@ -741,30 +888,34 @@ class JqGridJsonEncoder implements RequestedDataInterface {
      * @param $value
      * @return string
      */
-    protected function safe_json_encode($value){
-        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-            $encoded = json_encode($value, JSON_PRETTY_PRINT);
-        } else {
-            $encoded = json_encode($value);
-        }
-        switch (json_last_error()) {
-            case JSON_ERROR_NONE:
-                return $encoded;
-            case JSON_ERROR_DEPTH:
-                throw new JsonEncodingMaxDepthException('Maximum stack depth exceeded');
-            case JSON_ERROR_STATE_MISMATCH:
-                throw new JsonEncodingStateMismatchException('Underflow or the modes mismatch');
-            case JSON_ERROR_CTRL_CHAR:
-                throw new JsonEncodingUnexpectedControlCharException('Unexpected control character found');
-            case JSON_ERROR_SYNTAX:
-                throw new JsonEncodingSyntaxErrorException('Syntax error, malformed JSON');
-            case JSON_ERROR_UTF8:
-                $clean = self::utf8ize($value);
-                return self::safe_json_encode($clean);
-            default:
-                throw new JsonEncodingUnknownException('Unknown error');
-
-        }
+    protected function safe_json_encode($value)
+		{
+			if (version_compare(PHP_VERSION, '5.4.0') >= 0)
+			{
+				$encoded = json_encode($value, JSON_PRETTY_PRINT);
+			}
+			else
+			{
+				$encoded = json_encode($value);
+			}
+			switch (json_last_error())
+			{
+				case JSON_ERROR_NONE:
+					return $encoded;
+				case JSON_ERROR_DEPTH:
+					throw new JsonEncodingMaxDepthException('Maximum stack depth exceeded.');
+				case JSON_ERROR_STATE_MISMATCH:
+					throw new JsonEncodingStateMismatchException('Underflow or the modes mismatch.');
+				case JSON_ERROR_CTRL_CHAR:
+					throw new JsonEncodingUnexpectedControlCharException('Unexpected control character found.');
+				case JSON_ERROR_SYNTAX:
+					throw new JsonEncodingSyntaxErrorException('Syntax , malformed JSON.');
+				case JSON_ERROR_UTF8:
+					$clean = $this->utf8ize($value);
+					return $this->safe_json_encode($clean);
+				default:
+					throw new JsonEncodingUnknownException('Unknown error');
+			}
     }
 
     /**
@@ -776,15 +927,51 @@ class JqGridJsonEncoder implements RequestedDataInterface {
      * @param $mixed
      * @return array|string
      */
-    protected function utf8ize($mixed) {
-        if (is_array($mixed)) {
-            foreach ($mixed as $key => $value) {
-                $mixed[$key] = self::utf8ize($value);
-            }
-        } else if (is_string ($mixed)) {
-            return utf8_encode($mixed);
-        }
-        return $mixed;
+    protected function utf8ize($mixed)
+		{
+			if (is_array($mixed))
+			{
+				foreach ($mixed as $key => $value)
+				{
+						$mixed[$key] = $this->utf8ize($value);
+				}
+			} else if (is_string ($mixed))
+			{
+				return utf8_encode($mixed);
+			}
+
+			return $mixed;
     }
 
+		/**
+     * Set Spreadsheet styles
+     *
+     * @return void
+     */
+    protected function setSpreadsheetStyles()
+		{
+			$this->styleBold = [
+				'font' => [
+					'bold' => 'true'
+				]
+			];
+
+			$this->styleAlignmentLeft = [
+				'alignment' => [
+					'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+				]
+			];
+
+			$this->styleAlignmentRight = [
+				'alignment' => [
+					'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+				]
+			];
+
+			$this->styleAlignmentCenter = [
+				'alignment' => [
+					'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+				]
+			];
+    }
 }
