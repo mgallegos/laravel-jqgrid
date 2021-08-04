@@ -54,7 +54,10 @@ class LaravelJqgridServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->register('Maatwebsite\Excel\ExcelServiceProvider');
+		if ($this->isLaravelVersion('5'))
+		{
+			$this->app->register('Maatwebsite\Excel\ExcelServiceProvider');
+		}
 		$this->registerRender();
 		$this->registerEncoder();
 	}
