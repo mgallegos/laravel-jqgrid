@@ -514,9 +514,12 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 					}
 				}
 
+				$copyRows = $rows;
+				$rows = array();
+
 				if(empty($postedData['pivot']))
 				{
-					foreach ($rows as $index => &$row)
+					foreach ($copyRows as $index => $row)
 					{
 						$currentRow = array();
 
@@ -549,7 +552,8 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 							}
 						}
 
-						$row = $currentRow;
+						$rows[] = $currentRow;
+						// $row = $currentRow;
 					}
 				}
 
@@ -565,10 +569,9 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 				if(!empty($groupingView))
 				{
 					$groupedRows = $groupedRowsNumbers = $subTotalGroupedRow = $currentSubTotalGroupedRow = array();
-
 					$rowCounter = 0;
 
-					foreach ($rows as $index => &$row)
+					foreach ($rows as $index => $row)
 					{
 						if($rowCounter == 0)
 						{
@@ -833,8 +836,6 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 				$Writer =  new Xlsx($Spreadsheet);
 				$Writer->save('php://output');
 			});
-
-			// dd($rows);
 
 			$contentDisposition = 'attachment; filename=' . $postedData['name'] . '.xlsx';
 			$StreamedResponse->setStatusCode(Response::HTTP_OK);
