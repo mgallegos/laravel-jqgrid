@@ -343,7 +343,7 @@ class JqGridRender implements RenderInterface {
 		array $functionTypeProperties = array(),
 		array $pivotOptionsNames = array(),
 		array $groupHeaderOptionsNames = array(),
-		$token
+		$token = ''
 	)
 	{
 		$this->gridId = str_random(10);

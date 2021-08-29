@@ -177,7 +177,7 @@ abstract class EloquentRepositoryAbstract implements RepositoryInterface{
 	 *	An array of array, each array will have the data of a row.
 	 *  Example: array(array("column1" => "1-1", "column2" => "1-2"), array("column1" => "2-1", "column2" => "2-2"))
 	 */
-	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array(), $nodeId = null, $nodeLevel = null, $exporting)
+	public function getRows($limit, $offset, $orderBy = null, $sord = null, array $filters = array(), $nodeId = null, $nodeLevel = null, $exporting = false)
 	{
 		$orderByRaw = null;
 
