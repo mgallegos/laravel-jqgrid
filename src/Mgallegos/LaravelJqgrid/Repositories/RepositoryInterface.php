@@ -12,6 +12,15 @@ namespace Mgallegos\LaravelJqgrid\Repositories;
 interface RepositoryInterface {
 
 	/**
+	 * To be executed before getTotalNumberOfRows is called
+	 *
+	 * @param  array $input
+	 *  
+	 * @return void
+	 */
+	public function beforeProcessing(array $input = array());
+
+	/**
 	 * Calculate the number of rows. It's used for paging the result
 	 *
 	 * @param  array $filters

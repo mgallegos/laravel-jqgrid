@@ -229,6 +229,8 @@ class JqGridJsonEncoder implements RequestedDataInterface {
 			$filters['rules'] = array();
 		}
 
+		$Repository->beforeProcessing();
+		
 		$count = $Repository->getTotalNumberOfRows($filters['rules']);
 
 		if(empty($limit))
